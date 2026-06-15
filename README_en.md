@@ -2,11 +2,10 @@
 
 [![R Version](https://img.shields.io/badge/R-%3E%3D%204.0.0-blue.svg)](https://www.r-project.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Research Group](https://img.shields.io/badge/SMART_ECOSYSTEMS-Research_Group-004D26.svg)](https://smart-ecosystems.uva.es/)
 
 ---
 
-**WorldClimExtractR** is a lightweight, parameterized R tool developed by the **SMART ECOSYSTEMS Research Group** to extract, process, and summarize historical and future (CMIP6) WorldClim climate data based on geographic coordinates anywhere in the world.
+**WorldClimExtractR** is a lightweight, parameterized R tool to extract, process, and summarize historical and future (CMIP6) WorldClim climate data based on geographic coordinates anywhere in the world.
 
 ---
 

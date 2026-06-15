@@ -2,11 +2,10 @@
 
 [![R Version](https://img.shields.io/badge/R-%3E%3D%204.0.0-blue.svg)](https://www.r-project.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![GIR](https://img.shields.io/badge/SMART_ECOSYSTEMS-Research_Group-004D26.svg)](https://smart-ecosystems.uva.es/)
 
 ---
 
-**WorldClimExtractR** es una herramienta ágil y parametrizada en R desarrollada por el grupo **SMART ECOSYSTEMS Research Group** para extraer, procesar y resumir datos climáticos históricos y de futuras proyecciones (CMIP6) de WorldClim a partir de coordenadas geográficas en cualquier lugar del mundo.
+**WorldClimExtractR** es una herramienta ágil y parametrizada en R para extraer, procesar y resumir datos climáticos históricos y de futuras proyecciones (CMIP6) de WorldClim a partir de coordenadas geográficas en cualquier lugar del mundo.
 
 ---
 

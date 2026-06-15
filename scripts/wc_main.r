@@ -111,7 +111,7 @@ df$hst_end_year <- ifelse(df$hst_end_year > 2021, 2021, df$hst_end_year)
 
 # Print execution header
 cat("===========================================================\n")
-cat(" WorldClimExtractR — SMART ECOSYSTEMS Research Group\n")
+cat(" WorldClimExtractR — Climate Data Extraction Tool\n")
 cat("===========================================================\n")
 cat("[INFO] Caso de estudio: ", case_study_name, "\n", sep = "")
 cat("[INFO] Directorio base: ", basedir, "\n", sep = "")
