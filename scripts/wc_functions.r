@@ -54,7 +54,7 @@ install_and_load <- function(packages) {
 #' df_wgs84 <- get_wgs84_coords(df, crs_original = 25830, geometry = FALSE)
 #' @export
 get_wgs84_coords <- function(df, crs_original, x_col = "X_UTM", y_col = "Y_UTM",
-                             crs_target = 4326, geometry = TRUE) {
+                             crs_target = 4326, geometry = TRUE, verbose = TRUE) {
   # create sf object
   df_sf <- sf::st_as_sf(df, coords = c(x_col, y_col), crs = crs_original)
   
@@ -72,7 +72,9 @@ get_wgs84_coords <- function(df, crs_original, x_col = "X_UTM", y_col = "Y_UTM",
     df <- dplyr::select(df, -geometry)
   }
   
-  cat(paste("Coordinates transformed from CRS", crs_original, "to CRS", crs_target, "successfully!\n"))
+  if (verbose) {
+    cat(paste("Coordinates transformed from CRS", crs_original, "to CRS", crs_target, "successfully!\n"))
+  }
   
   return(df)
 }
@@ -92,14 +94,16 @@ get_wgs84_coords <- function(df, crs_original, x_col = "X_UTM", y_col = "Y_UTM",
 #' spdf <- get_spdf(df)
 #' @export
 get_spdf <- function(df, long_col = "longitude", lat_col = "latitude", 
-                      CRS = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0") {
+                      CRS = "+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0", verbose = TRUE) {
   # create SpatialPointsDataFrame object from coordinates
   spdf <- sp::SpatialPointsDataFrame(df[, c(long_col, lat_col)], df, proj4string = sp::CRS(CRS))
   
   # transform to target CRS
   spdf <- sp::spTransform(spdf, sp::CRS(CRS))
   
-  cat("SpatialPointsDataFrame object created successfully!\n")
+  if (verbose) {
+    cat("SpatialPointsDataFrame object created successfully!\n")
+  }
   
   return(spdf)
 }
@@ -121,7 +125,9 @@ get_spdf <- function(df, long_col = "longitude", lat_col = "latitude",
 #' spdf_hst <- get_wc_historic_data(spdf, var = 'bio', bio_var = 3)
 #' @export
 get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3, basedir = getwd(), verbose = TRUE) {
-  cat(paste("Extracting WorldClim historic ", var, " data for plot ", spdf@data[[plot_id]], "...\n", sep = ""))
+  if (verbose) {
+    cat(paste("Extracting WorldClim historic ", var, " data for plot ", spdf@data[[plot_id]], "...\n", sep = ""))
+  }
   
   wc_base_path <- file.path(basedir, "historical_climate_data")
   period <- "1970-2000"  # study baseline period
@@ -166,8 +172,10 @@ get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3,
   vars <- colnames(spdf@data)
   spdf@data <- dplyr::left_join(spdf@data, new_df, by = vars)
   
-  cat(paste("Data extracted for ", var, " in the plot ", spdf@data[[plot_id]], "\n", sep = ""))
-  cat("\n")
+  if (verbose) {
+    cat(paste("Data extracted for ", var, " in the plot ", spdf@data[[plot_id]], "\n", sep = ""))
+    cat("\n")
+  }
   
   if (verbose) {
     cat("Cite this data as follows:\n")
@@ -192,9 +200,11 @@ get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3,
 #' spdf_hst <- get_wc_historical_monthly_data(spdf, period = 2000:2020)
 #' @export
 get_wc_historical_monthly_data <- function(spdf, period = c(1951:2021), basedir = getwd(), verbose = TRUE) {
-  cat(paste("Extracting WorldClim historical monthly data for the period ", min(period), " to ", max(period), 
-            " in the plot ", spdf@data$id, "...\n", sep = ""))
-  cat("\n")
+  if (verbose) {
+    cat(paste("Extracting WorldClim historical monthly data for the period ", min(period), " to ", max(period), 
+              " in the plot ", spdf@data$id, "...\n", sep = ""))
+    cat("\n")
+  }
   
   wc_base_path <- file.path(basedir, "historical_monthly_data")
   folder_list <- dir(wc_base_path)
@@ -231,14 +241,18 @@ get_wc_historical_monthly_data <- function(spdf, period = c(1951:2021), basedir 
 
     tmp <- tibble::tibble()  # delete tmp data to avoid mismatching on column names
     
-    cat(paste("Data extracted for ", var, " in the plot ", spdf@data$id, "\n", sep = ""))
+    if (verbose) {
+      cat(paste("Data extracted for ", var, " in the plot ", spdf@data$id, "\n", sep = ""))
+    }
   }
   
   new_spdf@data$tavg <- (new_spdf@data$tmax + new_spdf@data$tmin) / 2
   
-  cat("Average temperature calculated!\n")
-  cat("All data was estimated successfully!\n")
-  cat("\n")
+  if (verbose) {
+    cat("Average temperature calculated!\n")
+    cat("All data was estimated successfully!\n")
+    cat("\n")
+  }
   
   if (verbose) {
     cat("You could cite this dataset as follows:\n")
@@ -287,8 +301,10 @@ get_wc_annual_data <- function(df, plot_id = 'ID', year_col = 'year', verbose = 
       .groups = "drop"
     )
   
-  cat("Annual data summarized!\n")
-  cat("\n")
+  if (verbose) {
+    cat("Annual data summarized!\n")
+    cat("\n")
+  }
 
   avg_year <- get_martonne(avg_year, verbose = verbose)  
     
@@ -364,7 +380,9 @@ get_wc_period_data <- function(df, plot_id = 'ID', grouping_var = 'year', period
     if (grouping_var == 'year') {
       avg_period$month <- 'annual'
     }
-    cat("Data summarized for period ", start_year, " to ", end_year, "!\n", sep = "")
+    if (verbose) {
+      cat("Data summarized for period ", start_year, " to ", end_year, "!\n", sep = "")
+    }
     
   } else if (grouping_var == 'period') {
     avg_period <- df %>%
@@ -387,10 +405,14 @@ get_wc_period_data <- function(df, plot_id = 'ID', grouping_var = 'year', period
         
         .groups = "drop"
       )
-    cat("Data summarized for the given range of periods!\n", sep = "")
+    if (verbose) {
+      cat("Data summarized for the given range of periods!\n", sep = "")
+    }
   }
   
-  cat("\n")
+  if (verbose) {
+    cat("\n")
+  }
   
   if (grouping_var == 'month') {
     avg_period$martonne <- NA
@@ -439,7 +461,9 @@ group_wc_period_data <- function(df_period_monthly, df_period_yearly) {
 get_martonne <- function(df, prec = 'prec', tavg = 'tavg', verbose = TRUE) {
   df$martonne <- df[[prec]] / (df[[tavg]] + 10)
   
-  cat("Martonne Aridity Index calculated!\n")
+  if (verbose) {
+    cat("Martonne Aridity Index calculated!\n")
+  }
   if (verbose) {
     cat("You could cite this index as follows:\n")
     cat("Martonne (1926). L’indice d’aridité. Bulletin de l’Association de Géographes Français, 3, 3–5.\n")
@@ -465,9 +489,11 @@ get_martonne <- function(df, prec = 'prec', tavg = 'tavg', verbose = TRUE) {
 #' spdf_fut <- get_wc_future_data(spdf, ssp = 'all', var = 'clim')
 #' @export
 get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all', basedir = getwd(), verbose = TRUE) {
-  cat(paste("Extracting WorldClim future climate data for model ", model, ", SSP ", ssp, " and var ", var, "...\n", 
-            sep = ""))
-  cat("\n")
+  if (verbose) {
+    cat(paste("Extracting WorldClim future climate data for model ", model, ", SSP ", ssp, " and var ", var, "...\n", 
+              sep = ""))
+    cat("\n")
+  }
   
   wc_base_path <- file.path(basedir, "future_climate_data")
   folder_list <- dir(wc_base_path)
@@ -546,10 +572,14 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
       
       tmp <- tibble::tibble()  # delete tmp data to avoid mismatching on column names
       
-      cat(paste("Data extracted for model ", model, ", SSP", file_ssp, " and variable ", file_var, " on period ", 
-                period, "\n", sep = ""))
+      if (verbose) {
+        cat(paste("Data extracted for model ", model, ", SSP", file_ssp, " and variable ", file_var, " on period ", 
+                  period, "\n", sep = ""))
+      }
     }
-    cat("\n")
+    if (verbose) {
+      cat("\n")
+    }
   }
   
   # group climate data
@@ -561,7 +591,9 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
     rm(new_spdf_tmin, new_spdf_tmax)
     
     new_spdf_clim@data$tavg <- (new_spdf_clim@data$tmax + new_spdf_clim@data$tmin) / 2
-    cat("Average temperature calculated\n")
+    if (verbose) {
+      cat("Average temperature calculated\n")
+    }
     
     if ("prec" %in% var) {
       new_spdf_clim_cols <- colnames(new_spdf_clim@data)
@@ -571,9 +603,11 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
     }
   }
 
-  cat("Average temperature calculated\n")
-  cat("All data was estimated successfully!\n")
-  cat("\n")
+  if (verbose) {
+    cat("Average temperature calculated\n")
+    cat("All data was estimated successfully!\n")
+    cat("\n")
+  }
   
   if (verbose) {
     cat("You could cite this dataset as follows:\n")
@@ -660,7 +694,9 @@ get_climodiagram <- function(df, plot_id = 'ID', grouping_var = 'year', year_col
                              long_col = "longitude", lat_col = "latitude", 
                              lang = 'en', save = TRUE, plot_name = '', output_path = getwd(), verbose = TRUE) {
   
-  cat("Creating climodiagram plot...\n")
+  if (verbose) {
+    cat("Creating climodiagram plot...\n")
+  }
   
   if (grouping_var == 'year') {
     if (start_year == '') {
@@ -787,7 +823,9 @@ get_climodiagram <- function(df, plot_id = 'ID', grouping_var = 'year', year_col
       plot.background = ggplot2::element_rect(fill = "white")
     )
   
-  cat("Climodiagram created successfully\n")
+  if (verbose) {
+    cat("Climodiagram created successfully\n")
+  }
   
   if (save) {
     full_output_path <- file.path(output_path, paste0(plot_name, "_climodiagram_walter_lieth_", lang, ".png"))
@@ -798,7 +836,9 @@ get_climodiagram <- function(df, plot_id = 'ID', grouping_var = 'year', year_col
     }
   }
   
-  cat("\n")
+  if (verbose) {
+    cat("\n")
+  }
   return(plot)
 }
 
@@ -840,9 +880,11 @@ get_climodiagram <- function(df, plot_id = 'ID', grouping_var = 'year', year_col
 #' @export
 get_location_plot <- function(df, long_col = 'longitude', lat_col = 'latitude', id_col = 'id',
                               map_type = NULL, area = NULL, lang = 'en', 
-                              save = TRUE, plot_name = '', output_path = getwd()) {
+                              save = TRUE, plot_name = '', output_path = getwd(), verbose = TRUE) {
   
-  cat("Creating map...\n")
+  if (verbose) {
+    cat("Creating map...\n")
+  }
   
   # ensure columns exist
   df$longitude <- df[[long_col]]
@@ -953,14 +995,18 @@ get_location_plot <- function(df, long_col = 'longitude', lat_col = 'latitude', 
     fontface = "bold"
   )
   
-  cat("Map created successfully\n")
+  if (verbose) {
+    cat("Map created successfully\n")
+  }
   
   if (save) {
     folder_maps <- file.path(output_path, "maps")
     dir.create(folder_maps, recursive = TRUE, showWarnings = FALSE)
     full_output_path <- file.path(folder_maps, paste0(plot_name, "_map_", lang, ".png"))
     ggplot2::ggsave(plot = plot, filename = full_output_path, dpi = 300, width = 10, height = 8)
-    cat("Map saved successfully to", full_output_path, "\n")
+    if (verbose) {
+      cat("Map saved successfully to", full_output_path, "\n")
+    }
   }
   
   return(plot)  
