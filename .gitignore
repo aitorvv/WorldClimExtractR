@@ -1,0 +1,32 @@
+# --- WorldClimExtractR .gitignore ---
+
+# Large climate data folders (TIFF files)
+# Ignore all files inside climate_data, but keep .gitkeep to track directory structures
+/climate_data/historical_climate_data/*
+!/climate_data/historical_climate_data/.gitkeep
+
+/climate_data/historical_monthly_data/*
+!/climate_data/historical_monthly_data/.gitkeep
+
+/climate_data/future_climate_data/*
+!/climate_data/future_climate_data/.gitkeep
+
+# Case studies
+# Ignore all case studies except the clean template
+case_studies/*
+!case_studies/template/
+
+# R environment and history files
+.Rhistory
+.RData
+.Rproj.user/
+*.RData
+*.Rhistory
+
+# System and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.Rapp.history
+Rplots.pdf
