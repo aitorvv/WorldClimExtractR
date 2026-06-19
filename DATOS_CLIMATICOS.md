@@ -1,4 +1,4 @@
-# Guía de Configuración de Datos Climáticos (WorldClim)
+# Guía de configuración de datos climáticos (WorldClim)
 *WorldClimExtractR — Documento de soporte técnico*
 
 > [!NOTE]
@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Fuentes de Descarga y Variables
+## 1. Fuentes de descarga y variables
 
 Para ejecutar las extracciones correctamente, debe descargar los datasets oficiales desde el portal web de **WorldClim (Versión 2.1)**. A continuación se detallan las fuentes y enlaces de descarga recomendados:
 
@@ -22,11 +22,12 @@ Para ejecutar las extracciones correctamente, debe descargar los datasets oficia
 
 ---
 
-## 2. Estructura de Directorios
+## 2. Estructura de directorios
 
-Los archivos descargados deben organizarse de forma estructurada en un directorio común llamado `climate_data/`. Las tres carpetas principales dentro de este directorio son `historical_climate_data/`, `historical_monthly_data/` y `future_climate_data/`.
+Los archivos descargados deben organizarse de forma estructurada en un directorio común llamado `climate_data/`. Las tres carpetas principales dentro de este directorio son `historical_climate_data/`, `historical_monthly_weather_data/` y `future_climate_data/`.
 
-### Estructura de archivos propuesta:
+### Estructura de archivos propuesta
+
 ```text
 WorldClimExtractR/
 └── climate_data/                                           # Carpeta contenedora de datos climáticos
@@ -39,7 +40,7 @@ WorldClimExtractR/
     │       ├── wc2.1_30s_prec_01.tif                       # Precipitación acumulada mensual promedio
     │       └── ... [prec_02.tif hasta prec_12.tif]
     │
-    ├── historical_monthly_data/
+    ├── historical_monthly_weather_data/
     │   ├── wc2.1_cruts4.06_2.5m_prec/                      # Carpeta de precipitación acumulada mensual
     │   │   ├── wc2.1_2.5m_prec_1951-01.tif
     │   │   ├── wc2.1_2.5m_prec_1951-02.tif
@@ -67,13 +68,13 @@ WorldClimExtractR/
 
 ---
 
-## 3. Nomenclatura Requerida y Combinaciones de Datos
+## 3. Nomenclatura requerida y combinaciones de datos
 
 El motor R de **WorldClimExtractR** localiza y extrae las variables basándose en la posición exacta de los caracteres en el nombre de los archivos (sustracción de cadenas de texto). Respete estrictamente la nomenclatura estándar suministrada por WorldClim.
 
 A continuación se detallan todas las combinaciones y patrones de nomenclatura admitidos por el script:
 
-### A. Datos Históricos Estáticos y Línea Base (`historical_climate_data/`)
+### A. Datos históricos estáticos y línea base (`historical_climate_data/`)
 Representan promedios climatológicos históricos globales para el periodo de referencia 1970-2000.
 * **Elevación estática (`elev`)**:
   * Ubicación: Archivo único en la raíz de la carpeta.
@@ -87,7 +88,7 @@ Representan promedios climatológicos históricos globales para el periodo de re
   * Patrón del nombre: `wc2.1_30s_[variable]_[mes].tif` (12 archivos mensuales por variable, de `01` a `12`).
   * Ejemplo: `wc2.1_30s_prec_01.tif` (Precipitación de referencia para enero).
 
-### B. Históricos Mensuales Continuos (`historical_monthly_data/`)
+### B. Históricos mensuales continuos (`historical_monthly_weather_data/`)
 Representan observaciones meteorológicas reales mensuales y consecutivas desde 1951 hasta 2024.
 * Ubicación: Dentro de carpetas con el formato `wc2.1_cruts4.06_2.5m_[variable]/` (donde la variable es `prec`, `tmax` o `tmin`).
 * Patrón del nombre: `wc2.1_2.5m_[variable]_[año]-[mes].tif`
@@ -96,7 +97,7 @@ Representan observaciones meteorológicas reales mensuales y consecutivas desde 
   * **Año (`1951` a `2024`)**: Se extrae de los caracteres 17 al 20.
   * **Mes (`01` a `12`)**: Se extrae de los caracteres 22 al 23.
 
-### C. Proyecciones Climáticas de Futuro CMIP6 (`future_climate_data/`)
+### C. Proyecciones climáticas de futuro CMIP6 (`future_climate_data/`)
 Representan las simulaciones climáticas futuras proyectadas por periodos temporales de 20 años y agrupadas por escenarios socioeconómicos (SSP).
 * Ubicación: Dentro de subcarpetas llamadas `[GCM]_SSP[SSP_Numero]` (ej. `MIROC6_SSP1`, `MIROC6_SSP2`, `MIROC6_SSP3` o `MIROC6_SSP5`).
 * Patrón del nombre: `wc2.1_30s_[variable]_[GCM]_ssp[ssp_codigo]_[periodo].tif`

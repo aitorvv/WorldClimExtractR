@@ -12,7 +12,7 @@
 
 ---
 
-## 🎨 Visual Showcase & Generated Outputs
+## 🎨 Visual showcase & generated outputs
 
 Here is an illustrative example using 6 coordinate plots located worldwide, showing both the spatial location check and the corresponding climate summary graphs:
 
@@ -23,11 +23,11 @@ Here is an illustrative example using 6 coordinate plots located worldwide, show
 
 ---
 
-## 📊 Tabular Data Previews
+## 📊 Tabular data previews
 
 Below is a preview of the structured tabular datasets automatically produced in `CSV` and `XLSX` (consolidated spreadsheet) formats:
 
-### A. Monthly Historical Data (`df_historical_monthly.csv`)
+### A. Monthly historical data (`historical_monthly_weather_data.csv`)
 First few rows showing the extracted monthly climate variables (e.g., precipitation, temperature extremes, and average):
 
 | id | latitude | longitude | elev | year | month | prec | tmax | tmin | tavg |
@@ -36,7 +36,7 @@ First few rows showing the extracted monthly climate variables (e.g., precipitat
 | plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 02 | 56.3 | 7.0 | -2.0 | 2.5 |
 | plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 03 | 96.7 | 12.0 | 0.0 | 6.0 |
 
-### B. Historical Period Summary (`df_historical_period.csv`)
+### B. Historical period summary (`historical_period_climatic_data.csv`)
 Aggregated values and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
@@ -44,7 +44,7 @@ Aggregated values and calculated indices (such as the Martonne Aridity Index) re
 | plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
 | plot_2 | 2015_2021 | annual | 8.2 | 20.8 | 14.5 | 1392.9 | 56.81 |
 
-### C. Future Climate Period Projections (`df_future_period.csv`)
+### C. Future climate period projections (`future_period_climatic_data.csv`)
 CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/period and SSP scenario:
 
 | id | model | file_ssp | period | tmin | tmax | tavg | prec | martonne |
@@ -58,15 +58,15 @@ CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/p
 
 ---
 
-## Table of Contents
+## Table of contents
 
 - [Features](#features)
 - [Requirements](#requirements)
-- [Repository Structure](#repository-structure)
-- [Full Usage Example](#full-usage-example)
-- [Command Line Interface (CLI) Options](#command-line-interface-cli-options)
-- [Geospatial Layers Configuration](#geospatial-layers-configuration)
-- [Citations and References](#citations-and-references)
+- [Repository structure](#repository-structure)
+- [Full usage example](#full-usage-example)
+- [Command line interface (CLI) options](#command-line-interface-cli-options)
+- [Geospatial layers configuration](#geospatial-layers-configuration)
+- [Citations and references](#citations-and-references)
 - [License](#license)
 
 ---
@@ -83,7 +83,7 @@ CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/p
 ---
 ## 📦 Requirements
 
-### System Dependencies
+### System dependencies
 Ensure you have R installed (version `>= 4.0.0`) along with system libraries required by spatial dependencies like `sf`:
 
 ```bash
@@ -91,7 +91,7 @@ Ensure you have R installed (version `>= 4.0.0`) along with system libraries req
 sudo apt-get install libgdal-dev libgeos-dev libproj-dev libudunits2-dev
 ```
 
-### R Packages
+### R packages
 The main script automatically checks and installs any missing R packages:
 * `eurostat`
 * `giscoR`
@@ -101,12 +101,12 @@ The main script automatically checks and installs any missing R packages:
 * `sf`
 * `tidyverse`
 
-### Climate Data (.tif)
+### Climate data (.tif)
 Users must download all the required `.tif` files to retrieve climate data, which can be done from the official [WorldClim](https://www.worldclim.org/data/index.html) website. To learn how to name and organize these layers, please refer to the [Geospatial Data Setup Guide (DATOS_CLIMATICOS_en.md)](DATOS_CLIMATICOS_en.md).
 
 ---
 
-## 📂 Repository Structure
+## 📂 Repository structure
 
 The repository maintains a clean structure, excluding large raster layers and user study outputs from version control:
 
@@ -139,12 +139,12 @@ graph LR
     Root --> Gitignore["📄 .gitignore"]:::file
     
     %% scripts/
-    DirScripts --> ScriptMain["📄 wc_main.r (CLI / Interactive)"]:::file
-    DirScripts --> ScriptFuncs["📄 wc_functions.r (Functions)"]:::file
+    DirScripts --> ScriptMain["📄 main.r (CLI / Interactive)"]:::file
+    DirScripts --> ScriptFuncs["📄 functions.r (Functions)"]:::file
     
     %% climate_data/
     DirData --> DataHist["📁 historical_climate_data"]:::folder
-    DirData --> DataMonthly["📁 historical_monthly_data"]:::folder
+    DirData --> DataMonthly["📁 historical_monthly_weather_data"]:::folder
     DirData --> DataFuture["📁 future_climate_data"]:::folder
     
     %% documentation/
@@ -169,11 +169,11 @@ graph LR
 
 ---
 
-## 🚀 Full Usage Example
+## 🚀 Full usage example
 
 To run a test case using the provided template case study:
 
-### Step 1: Configure your input coordinates
+### Step 1: configure your input coordinates
 Edit the input CSV file at `case_studies/template/input/wc_plots.csv`, specifying the point identifiers (*id*), coordinates (*latitude* and *longitude*, CRS = WGS84), and the historical years of interest to extract (*hst_start_year* and *hst_end_year*; defaults to the 1990-2020 period):
 
 ```csv
@@ -182,47 +182,47 @@ plot_1,37.90322,-2.91116,2015,2021
 plot_2,42.60910,-4.77280,1990,2020
 ```
 
-### Step 2: Organize your Raster (.tif) files
+### Step 2: organize your raster (.tif) files
 Download and arrange the WorldClim raster files according to the conventions explained in [DATOS_CLIMATICOS_en.md](DATOS_CLIMATICOS_en.md). You can store them in:
 1. **The project directory** (default): Place the three subfolders of data inside `climate_data/` in the root folder.
 2. **An external drive or custom folder**: Place the climate data structure elsewhere and pass its path using the `--data` flag (recommended to avoid taking up local storage space).
 
-### Step 3: Run the script from the terminal
-Open your terminal and run the main script. You can view all available parameters and flags in the [Command Line Interface (CLI) Options](#⚙️-command-line-interface-cli-options) section (also available via the `Rscript scripts/wc_main.r --help` command):
+### Step 3: run the script from the terminal
+Open your terminal and run the main script. You can view all available parameters and flags in the [Command Line Interface (CLI) Options](#⚙️-command-line-interface-cli-options) section (also available via the `Rscript scripts/main.r --help` command):
 
 ```bash
 # Basic run (looking for TIFF files in the climate_data project folder)
-Rscript scripts/wc_main.r --case "template" --basedir "." --lang "es" --hst_var "elev" --fut_var "clim" --ssp "all"
+Rscript scripts/main.r --case "template" --basedir "." --lang "es" --hst_var "elev" --fut_var "clim" --ssp "all"
 
 # Run specifying an external path where TIFF files are stored
-Rscript scripts/wc_main.r --case "template" --basedir "." --data "/media/user/ExternalDrive/climate_data/" --lang "en"
+Rscript scripts/main.r --case "template" --basedir "." --data "/media/user/ExternalDrive/climate_data/" --lang "en"
 ```
 
-### Step 4: Inspect Generated Outputs
+### Step 4: inspect generated outputs
 Once execution completes, find your output files in `case_studies/template/output/` (or the equivalent `output/` directory of your case study if you duplicated the template for another project). To visually verify geographical coordinates and Walter-Lieth graphs, consult the [Results Verification Guide (GUIA_VERIFICACION_en.md)](GUIA_VERIFICACION_en.md).
 
 Outputs are grouped as follows:
 
 * **`data/`**:
-  * `df_historical_monthly.csv`: Historical monthly dataset (precipitation, temperatures).
-  * `df_historical_year.csv`: Historical annual summaries and calculated Martonne Aridity Index.
-  * `df_historical_period.csv`: Averaged values representing the entire historical range.
-  * `df_future.csv` & `df_future_period.csv`: CMIP6 future climate projections (MIROC6 model).
-  * `wc_output_data.xlsx`: Consolidated multi-sheet Excel workbook with all tables.
+  * `historical_monthly_weather_data.csv`: Historical monthly dataset (precipitation, temperatures).
+  * `historical_year_climatic_data.csv`: Historical annual summaries and calculated Martonne Aridity Index.
+  * `historical_period_climatic_data.csv`: Averaged values representing the entire historical range.
+  * `future_climate_data.csv` & `future_period_climatic_data.csv`: CMIP6 future climate projections (MIROC6 model).
+  * `all_output_data.xlsx`: Consolidated multi-sheet Excel workbook with all tables.
   * `plots_extracted.geojson`: Geospatial vector file with coordinates and period summaries.
   * `citations_and_metadata.md`: Markdown document detailing script options and references to cite.
-  * `wc_environment.RData`: R environment snapshot for further custom analysis.
+  * `environment.rdata`: R environment snapshot for further custom analysis.
 * **`maps/`**:
   * Location maps containing plot points with their IDs plotted for visual verification (national, European, and regional scales).
 * **`climodiagrams/`**:
   * **`historical/`**: Historical Walter-Lieth diagrams for each plot.
-  * **`future/`**: Projections sorted by SSP scenarios and decades (e.g., `df_plot_1_fut_ssp_2_period_2021-2040_climodiagram_walter_lieth_en.png`).
+  * **`future/`**: Projections sorted by SSP scenarios and decades (e.g., `plot_1_future_ssp_2_period_2021-2040_climodiagram_walter_lieth_en.png`).
 
 ---
 
-## ⚙️ Command Line Interface (CLI) Options
+## ⚙️ Command line interface (CLI) options
 
-The `scripts/wc_main.r` script supports the following CLI arguments:
+The `scripts/main.r` script supports the following CLI arguments:
 
 | Short Flag | Long Flag | Type | Default | Description |
 | :--- | :--- | :--- | :--- | :--- |
@@ -239,22 +239,22 @@ The `scripts/wc_main.r` script supports the following CLI arguments:
 | | `--map` | `logical` | `TRUE` | Enable/disable plot verification map generation |
 | | `--climodiagram`| `logical` | `TRUE` | Enable/disable Walter-Lieth climate diagram generation |
 
-### Advanced Usage Example:
+### Advanced usage example
 ```bash
 # Load data from external storage, extract BIO3 bioclimatic variable, and disable future projections
-Rscript scripts/wc_main.r --case "my_project" --data "/media/user/HD" --hst_var "bio" --hst_bio 3 --future FALSE
+Rscript scripts/main.r --case "my_project" --data "/media/user/HD" --hst_var "bio" --hst_bio 3 --future FALSE
 ```
 
 ---
 
-## 📂 Geospatial Layers Configuration
+## 📂 Geospatial layers configuration
 
 To learn more about downloading, decade structure, and naming conventions for Earth's precipitation, temperature, and CMIP6 TIFF layers, check:
 * [Geospatial Data Setup Guide (DATOS_CLIMATICOS_en.md)](DATOS_CLIMATICOS_en.md)
 
 ---
 
-## 🤝 Citations and References
+## 🤝 Citations and references
 
 When publishing scientific papers or reports using data generated by this tool, please cite both the repository and the original data sources:
 

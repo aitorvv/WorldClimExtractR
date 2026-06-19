@@ -197,16 +197,16 @@ get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3,
 #' @param verbose Logical to print the citation of the data (default TRUE).
 #' @return SpatialPointsDataFrame with the extracted weather data.
 #' @examples
-#' spdf_hst <- get_wc_historical_monthly_data(spdf, period = 2000:2020)
+#' spdf_hst <- get_wc_historical_monthly_weather_data(spdf, period = 2000:2020)
 #' @export
-get_wc_historical_monthly_data <- function(spdf, period = c(1951:2021), basedir = getwd(), verbose = TRUE) {
+get_wc_historical_monthly_weather_data <- function(spdf, period = c(1951:2021), basedir = getwd(), verbose = TRUE) {
   if (verbose) {
     cat(paste("Extracting WorldClim historical monthly data for the period ", min(period), " to ", max(period), 
               " in the plot ", spdf@data$id, "...\n", sep = ""))
     cat("\n")
   }
   
-  wc_base_path <- file.path(basedir, "historical_monthly_data")
+  wc_base_path <- file.path(basedir, "historical_monthly_weather_data")
   folder_list <- dir(wc_base_path)
   
   tmp <- tibble::tibble()
@@ -271,7 +271,7 @@ get_wc_historical_monthly_data <- function(spdf, period = c(1951:2021), basedir 
 #'
 #' Summarizes monthly climate data into annual statistics (including Martonne index).
 #'
-#' @param df Data frame with the monthly data (extracted via get_wc_historical_monthly_data).
+#' @param df Data frame with the monthly data (extracted via get_wc_historical_monthly_weather_data).
 #' @param plot_id Character representing the plot ID column name (default 'ID').
 #' @param year_col Character representing the year column name (default 'year').
 #' @param verbose Logical to print the citation of the data (default TRUE).

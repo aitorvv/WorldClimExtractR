@@ -1,12 +1,12 @@
-# How to Cite WorldClimExtractR
+# How to cite WorldClimExtractR
 
 If you use this tool in your research, publications, or projects, please cite it as follows:
 
-## Recommended Citation (APA Style)
+## Recommended citation (APA style)
 
 Vázquez-Veloso, A. (2026). WorldClimExtractR: A parameterized R tool for historical and future CMIP6 WorldClim climate data extraction. GitHub repository: https://github.com/aitorvv/WorldClimExtractR
 
-## BibTeX Entry
+## BibTeX entry
 
 ```bibtex
 @misc{vazquezveloso2026worldclimextractr,

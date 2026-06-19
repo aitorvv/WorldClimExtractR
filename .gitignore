@@ -5,8 +5,8 @@
 /climate_data/historical_climate_data/*
 !/climate_data/historical_climate_data/.gitkeep
 
-/climate_data/historical_monthly_data/*
-!/climate_data/historical_monthly_data/.gitkeep
+/climate_data/historical_monthly_weather_data/*
+!/climate_data/historical_monthly_weather_data/.gitkeep
 
 /climate_data/future_climate_data/*
 !/climate_data/future_climate_data/.gitkeep
@@ -28,5 +28,6 @@ case_studies/*
 Thumbs.db
 .vscode/
 .idea/
+.agents/
 .Rapp.history
 Rplots.pdf

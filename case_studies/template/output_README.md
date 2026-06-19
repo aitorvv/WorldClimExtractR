@@ -1,29 +1,66 @@
-# WorldClimExtractR - Output Directory Template / Estructura de Salidas
+# WorldClimExtractR - Output directory template / Plantilla de la estructura de salidas
 
-This directory will contain the generated climate data extraction results after running the tool on a case study. Below is the structure and brief explanation of what is generated.
-
-Para una explicación detallada de las variables y columnas, consulte:
-`documentation/SALIDAS_GENERADAS.md` or `documentation/GENERATED_OUTPUTS.md`
+🇬🇧 **English version below**  
+🇪🇸 **Versión en español a continuación**
 
 ---
 
-## Estructura de Salida / Output Structure
+## 🇬🇧 Output directory template
+
+This directory will contain the generated climate data extraction results after running the tool on a case study. Below is the structure and a brief explanation of the files generated.
+
+For a detailed explanation of variables and columns, please refer to:
+* [SALIDAS_GENERADAS.md](../../documentation/SALIDAS_GENERADAS.md) (Spanish)
+* [GENERATED_OUTPUTS.md](../../documentation/GENERATED_OUTPUTS.md) (English)
+
+### Output structure
 
 ```text
 output/
 ├── data/
-│   ├── df_historical_monthly.csv - Historical monthly T, P, Martonne
-│   ├── df_historical_year.csv    - Historical annual T, P, Martonne
-│   ├── df_historical_period.csv  - Historical bioclimatic variables (bio1-bio19)
-│   ├── df_future.csv             - CMIP6 future climate projections
-│   ├── df_future_period.csv      - Future period monthly averages
-│   ├── wc_output_data.xlsx       - Consolidated Excel workbook
-│   ├── plots_extracted.geojson   - Spatial WGS84 point layer with climate attributes
-│   ├── citations_and_metadata.md - Auto-generated scientific citations and metadata
-│   └── wc_environment.RData      - Saved R workspace image
+│   ├── historical_monthly_weather_data.csv  - Historical monthly T, P, Martonne
+│   ├── historical_year_climatic_data.csv    - Historical annual T, P, Martonne
+│   ├── historical_period_climatic_data.csv  - Historical bioclimatic variables (bio1-bio19)
+│   ├── future_climate_data.csv              - CMIP6 future climate projections
+│   ├── future_period_climatic_data.csv      - Future period monthly averages
+│   ├── all_output_data.xlsx                 - Consolidated Excel workbook
+│   ├── plots_extracted.geojson              - Spatial WGS84 point layer with climate attributes
+│   ├── citations_and_metadata.md            - Auto-generated scientific citations and metadata
+│   └── environment.rdata                    - Saved R workspace image
 ├── maps/
-│   └── location_map_[lang].png   - Geographic verification map (global, continental, regional)
+│   └── location_map_[lang].png              - Geographic verification map (global, continental, regional)
 └── climodiagrams/
-    ├── historical/               - Walter-Lieth climodiagrams for historical data
-    └── future/                   - Walter-Lieth climodiagrams for future CMIP6 data
+    ├── historical/                          - Walter-Lieth climodiagrams for historical data
+    └── future/                              - Walter-Lieth climodiagrams for future CMIP6 data
+```
+
+---
+
+## 🇪🇸 Plantilla de la estructura de salidas
+
+Este directorio contendrá los resultados generados tras la extracción de datos climáticos al ejecutar la herramienta en un caso de estudio. A continuación se detalla la estructura y una breve explicación de los archivos generados.
+
+Para obtener una explicación detallada de las variables y columnas, consulte:
+* [SALIDAS_GENERADAS.md](../../documentation/SALIDAS_GENERADAS.md) (español)
+* [GENERATED_OUTPUTS.md](../../documentation/GENERATED_OUTPUTS.md) (inglés)
+
+### Estructura de salidas
+
+```text
+output/
+├── data/
+│   ├── historical_monthly_weather_data.csv  - Datos meteorológicos mensuales históricos (T, P, Martonne)
+│   ├── historical_year_climatic_data.csv    - Resúmenes climáticos anuales históricos (T, P, Martonne)
+│   ├── historical_period_climatic_data.csv  - Variables bioclimáticas del periodo histórico (bio1-bio19)
+│   ├── future_climate_data.csv              - Proyecciones climáticas futuras de CMIP6
+│   ├── future_period_climatic_data.csv      - Medias mensuales de periodos futuros
+│   ├── all_output_data.xlsx                 - Libro de Excel consolidado
+│   ├── plots_extracted.geojson              - Capa espacial de puntos WGS84 con atributos climáticos
+│   ├── citations_and_metadata.md            - Referencias científicas y metadatos autogenerados
+│   └── environment.rdata                    - Imagen guardada del espacio de trabajo de R
+├── maps/
+│   └── location_map_[lang].png              - Mapa de verificación geográfica (global, continental, regional)
+└── climodiagrams/
+    ├── historical/                          - Climogramas Walter-Lieth para datos históricos
+    └── future/                              - Climogramas Walter-Lieth para proyecciones futuras CMIP6
 ```

@@ -1,4 +1,4 @@
-# Climate Data Configuration Guide (WorldClim)
+# Climate data configuration guide (WorldClim)
 *WorldClimExtractR — Technical Support Document*
 
 > [!NOTE]
@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Download Sources and Variables
+## 1. Download sources and variables
 
 To run the extractions correctly, you must download the official datasets from the **WorldClim (Version 2.1)** portal. The recommended sources and download links are detailed below:
 
@@ -22,11 +22,12 @@ To run the extractions correctly, you must download the official datasets from t
 
 ---
 
-## 2. Directory Structure
+## 2. Directory structure
 
-The downloaded files must be organized in a structured way in a shared directory called `climate_data/`. The three main folders inside this directory are `historical_climate_data/`, `historical_monthly_data/`, and `future_climate_data/`.
+The downloaded files must be organized in a structured way in a shared directory called `climate_data/`. The three main folders inside this directory are `historical_climate_data/`, `historical_monthly_weather_data/`, and `future_climate_data/`.
 
-### Proposed file structure:
+### Proposed file structure
+
 ```text
 WorldClimExtractR/
 └── climate_data/                                           # Containment folder for climate data
@@ -39,7 +40,7 @@ WorldClimExtractR/
     │       ├── wc2.1_30s_prec_01.tif                       # Average monthly accumulated precipitation
     │       └── ... [prec_02.tif to prec_12.tif]
     │
-    ├── historical_monthly_data/
+    ├── historical_monthly_weather_data/
     │   ├── wc2.1_cruts4.06_2.5m_prec/                      # Folder for monthly accumulated precipitation
     │   │   ├── wc2.1_2.5m_prec_1951-01.tif
     │   │   ├── wc2.1_2.5m_prec_1951-02.tif
@@ -67,13 +68,13 @@ WorldClimExtractR/
 
 ---
 
-## 3. Required File Naming and Data Combinations
+## 3. Required file naming and data combinations
 
 The R engine of **WorldClimExtractR** locates and extracts variables based on exact character positions within file names (string slicing). You must strictly respect the default naming conventions provided by WorldClim.
 
 Below are all the naming patterns and combinations supported by the script:
 
-### A. Static Historical and Baseline Data (`historical_climate_data/`)
+### A. Static historical and baseline data (`historical_climate_data/`)
 Represent global historical climatological averages for the 1970-2000 reference period.
 * **Static Elevation (`elev`)**:
   * Location: Single file in the root folder.
@@ -87,7 +88,7 @@ Represent global historical climatological averages for the 1970-2000 reference 
   * Name pattern: `wc2.1_30s_[variable]_[month].tif` (12 monthly files per variable, from `01` to `12`).
   * Example: `wc2.1_30s_prec_01.tif` (Baseline precipitation for January).
 
-### B. Continuous Historical Monthly Data (`historical_monthly_data/`)
+### B. Continuous historical monthly data (`historical_monthly_weather_data/`)
 Represent actual monthly meteorological observations from 1951 to 2024.
 * Location: Inside folders named `wc2.1_cruts4.06_2.5m_[variable]/` (where the variable is `prec`, `tmax`, or `tmin`).
 * Name pattern: `wc2.1_2.5m_[variable]_[year]-[month].tif`
@@ -96,7 +97,7 @@ Represent actual monthly meteorological observations from 1951 to 2024.
   * **Year (`1951` to `2024`)**: Extracted from characters 17 to 20.
   * **Month (`01` to `12`)**: Extracted from characters 22 to 23.
 
-### C. Future CMIP6 Climate Projections (`future_climate_data/`)
+### C. Future CMIP6 climate projections (`future_climate_data/`)
 Represent future climate simulations projected by 20-year periods and grouped by Shared Socioeconomic Pathways (SSP).
 * Location: Inside subfolders named `[GCM]_SSP[SSP_Number]` (e.g., `MIROC6_SSP1`, `MIROC6_SSP2`, `MIROC6_SSP3`, or `MIROC6_SSP5`).
 * Name pattern: `wc2.1_30s_[variable]_[GCM]_ssp[ssp_code]_[period].tif`

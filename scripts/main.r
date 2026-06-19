@@ -7,7 +7,6 @@
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 
-
 # Load command-line parser ====
 
 # dynamically install and load optparse to read command line arguments
@@ -18,50 +17,75 @@ suppressPackageStartupMessages(library(optparse))
 
 # Define CLI options ====
 option_list <- list(
-  make_option(c("-c", "--case"), type = "character", default = "template",
-              help = "Name of the case study folder inside case_studies [default: %default]",
-              metavar = "character"),
-  make_option(c("-b", "--basedir"), type = "character", default = getwd(),
-              help = "Base directory path of the WorldClim repository [default: current directory]",
-              metavar = "character"),
-  make_option(c("-d", "--data"), type = "character", default = NULL,
-              help = "Directory path where WorldClim TIFF folders are located [default: same as basedir]",
-              metavar = "character"),
-  make_option(c("-l", "--lang"), type = "character", default = "en",
-              help = "Language of outputs and plots ('en' or 'es') [default: %default]",
-              metavar = "character"),
-  make_option(c("-e", "--hst_var"), type = "character", default = "elev",
-              help = "Historical climate variable to extract (bio, elev, clim, prec, srad, tmax, tmin, vapr, wind) [default: %default]",
-              metavar = "character"),
-  make_option(c("-v", "--hst_bio"), type = "integer", default = NULL,
-              help = "Bio variable number, only required when hst_var = 'bio' (1-19) [default: %default]",
-              metavar = "integer"),
-  make_option(c("-f", "--fut_var"), type = "character", default = "clim",
-              help = "Future variables to extract ('all', 'bioc', 'clim') [default: %default]",
-              metavar = "character"),
-  make_option(c("-s", "--ssp"), type = "character", default = "all",
-              help = "Shared Socioeconomic Pathways to process (1, 2, 3, 5 or 'all') [default: %default]",
-              metavar = "character"),
-  make_option(c("--map"), type = "logical", default = TRUE,
-              help = "Generate and save the sampling plot location map [default: %default]",
-              metavar = "logical"),
-  make_option(c("--climodiagram"), type = "logical", default = TRUE,
-              help = "Generate and save Walter-Lieth climodiagram plots [default: %default]",
-              metavar = "logical"),
-  make_option(c("--historical"), type = "logical", default = TRUE,
-              help = "Extract and process historical climate data [default: %default]",
-              metavar = "logical"),
-  make_option(c("--future"), type = "logical", default = TRUE,
-              help = "Extract and process future climate projections [default: %default]",
-              metavar = "logical"),
-  make_option(c("--verbose"), type = "logical", default = FALSE,
-              help = "Print detailed extraction and processing logs [default: %default]",
-              metavar = "logical")
+  make_option(c("-c", "--case"),
+    type = "character", default = "example",
+    help = "Name of the case study folder inside case_studies [default: %default]",
+    metavar = "character"
+  ),
+  make_option(c("-b", "--basedir"),
+    type = "character", default = getwd(),
+    help = "Base directory path of the WorldClim repository [default: current directory]",
+    metavar = "character"
+  ),
+  make_option(c("-d", "--data"),
+    type = "character", default = NULL,
+    help = "Directory path where WorldClim TIFF folders are located [default: same as basedir]",
+    metavar = "character"
+  ),
+  make_option(c("-l", "--lang"),
+    type = "character", default = "en",
+    help = "Language of outputs and plots ('en' or 'es') [default: %default]",
+    metavar = "character"
+  ),
+  make_option(c("-e", "--hst_var"),
+    type = "character", default = "elev",
+    help = "Historical climate variable to extract (bio, elev, clim, prec, srad, tmax, tmin, vapr, wind) [default: %default]",
+    metavar = "character"
+  ),
+  make_option(c("-v", "--hst_bio"),
+    type = "integer", default = NULL,
+    help = "Bio variable number, only required when hst_var = 'bio' (1-19) [default: %default]",
+    metavar = "integer"
+  ),
+  make_option(c("-f", "--fut_var"),
+    type = "character", default = "clim",
+    help = "Future variables to extract ('all', 'bioc', 'clim') [default: %default]",
+    metavar = "character"
+  ),
+  make_option(c("-s", "--ssp"),
+    type = "character", default = "2",
+    help = "Shared Socioeconomic Pathways to process (1, 2, 3, 5 or 'all') [default: %default]",
+    metavar = "character"
+  ),
+  make_option(c("--map"),
+    type = "logical", default = TRUE,
+    help = "Generate and save the sampling plot location map [default: %default]",
+    metavar = "logical"
+  ),
+  make_option(c("--climodiagram"),
+    type = "logical", default = TRUE,
+    help = "Generate and save Walter-Lieth climodiagram plots [default: %default]",
+    metavar = "logical"
+  ),
+  make_option(c("--historical"),
+    type = "logical", default = TRUE,
+    help = "Extract and process historical climate data [default: %default]",
+    metavar = "logical"
+  ),
+  make_option(c("--future"),
+    type = "logical", default = TRUE,
+    help = "Extract and process future climate projections [default: %default]",
+    metavar = "logical"
+  ),
+  make_option(c("--verbose"),
+    type = "logical", default = FALSE,
+    help = "Print detailed extraction and processing logs [default: %default]",
+    metavar = "logical"
+  )
 )
 
 opt_parser <- OptionParser(option_list = option_list)
 opt <- parse_args(opt_parser)
-
 
 
 # Initialize environment and paths ====
@@ -87,11 +111,11 @@ input_file <- file.path(basedir, "case_studies", case_study_name, "input", "wc_p
 output_path <- file.path(basedir, "case_studies", case_study_name, "output")
 
 # Load functions from scripts directory
-source(file.path(basedir, "scripts", "wc_functions.r"))
+# Note: setwd() must be set to the WorldClimExtractR repository directory (e.g. ~/WorldClimExtractR)
+source(file.path(basedir, "scripts", "functions.r"))
 
 # Load necessary geospatial and data manipulation libraries
 install_and_load(c("raster", "tidyverse", "eurostat", "giscoR", "sf", "openxlsx"))
-
 
 
 # Data preparation ====
@@ -120,19 +144,21 @@ if (!"hst_end_year" %in% colnames(df)) {
 }
 
 # Correct historical end year to prevent future year query errors
-df$hst_end_year <- ifelse(df$hst_end_year > 2021, 2021, df$hst_end_year)
+df$hst_end_year <- ifelse(df$hst_end_year > 2024, 2024, df$hst_end_year)
 
 # Print execution header
 cat("===========================================================\n")
 cat(" WorldClimExtractR — Climate Data Extraction Tool\n")
 cat("===========================================================\n")
-cat("[INFO] Caso de estudio: ", case_study_name, "\n", sep = "")
-cat("[INFO] Directorio base: ", basedir, "\n", sep = "")
-cat("[INFO] Ruta de capas climáticas: ", datadir, "\n", sep = "")
-cat("[INFO] Idioma de salida: ", lang, "\n", sep = "")
-cat(sprintf("[INFO] Tareas activas: Mapa=%s | Histórico=%s | Futuro=%s | Climogramas=%s\n",
-            run_map, run_historical, run_future, run_climodiagram))
-cat("[INFO] Total de parcelas a procesar: ", length(unique(df$id)), "\n", sep = "")
+cat("[INFO] Case study: ", case_study_name, "\n", sep = "")
+cat("[INFO] Base directory: ", basedir, "\n", sep = "")
+cat("[INFO] Climate layers path: ", datadir, "\n", sep = "")
+cat("[INFO] Output language: ", lang, "\n", sep = "")
+cat(sprintf(
+  "[INFO] Active tasks: Map=%s | Historical=%s | Future=%s | Climodiagrams=%s\n",
+  run_map, run_historical, run_future, run_climodiagram
+))
+cat("[INFO] Total plots to process: ", length(unique(df$id)), "\n", sep = "")
 cat("===========================================================\n\n")
 
 # Automatically convert coordinate projection if input is in UTM system
@@ -150,18 +176,19 @@ if (!"longitude" %in% colnames(df) || !"latitude" %in% colnames(df)) {
 # Generate verification maps ====
 
 if (run_map) {
-  cat("[1/5] Generando mapas de verificación geográfica...\n")
-  get_location_plot(df, long_col = "longitude", lat_col = "latitude", id_col = "id", 
-                    lang = lang, save = TRUE, plot_name = "location", output_path = output_path, verbose = verbose)
+  cat("[1/5] Generating geographic verification maps...\n")
+  get_location_plot(df,
+    long_col = "longitude", lat_col = "latitude", id_col = "id",
+    lang = lang, save = TRUE, plot_name = "location", output_path = output_path, verbose = verbose
+  )
   if (!verbose) {
-    cat("      -> Guardados en: case_studies/", case_study_name, "/output/maps/ [OK]\n\n", sep = "")
+    cat("      -> Saved in: case_studies/", case_study_name, "/output/maps/ [OK]\n\n", sep = "")
   } else {
     cat("\n")
   }
 } else {
-  cat("[1/5] Generando mapas de verificación geográfica... Omitido (flag desactivado)\n\n")
+  cat("[1/5] Generating geographic verification maps... Skipped (flag disabled)\n\n")
 }
-
 
 
 # Data extraction loop ====
@@ -172,86 +199,96 @@ total_plots <- length(unique_plots)
 
 # Phase 2: Historical climate data extraction
 if (run_historical) {
-  cat("[2/5] Extrayendo y procesando datos históricos...\n")
+  cat("[2/5] Extracting and processing historical data...\n")
   current_idx <- 0
   for (plot_id_val in unique_plots) {
     current_idx <- current_idx + 1
     pct <- round((current_idx / total_plots) * 100)
-    
+
     # citation info on the first iteration if verbose is enabled
     verbose_func <- verbose && (current_idx == 1)
     if (verbose_func) {
-      cat("\n[INFO] Las instrucciones de citación se mostrarán solo en esta primera parcela.\n\n")
+      cat("\n[INFO] Citation instructions will be shown only for this first plot.\n\n")
     }
-    
+
     if (!verbose) {
-      cat(sprintf("      [%d/%d] (%3d%%) Procesando parcela: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
+      cat(sprintf("      [%d/%d] (%3d%%) Processing plot: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
       flush.console()
     } else {
-      cat(sprintf("\n--- Procesando parcela [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
+      cat(sprintf("\n--- Processing plot [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
     }
-    
+
     plot_row <- df[df$id == plot_id_val, ]
     tmp_spdf <- get_spdf(df = plot_row, long_col = "longitude", lat_col = "latitude", verbose = verbose_func)
-    
+
     # 1. extract historic baseline point data (e.g. elevation or bioclimatic baseline)
-    tmp_spdf_hst <- get_wc_historic_data(spdf = tmp_spdf, plot_id = "id", var = target_hst_var, 
-                                         bio_var = target_hst_bio_var, basedir = datadir, verbose = verbose_func)
-    
+    tmp_spdf_hst <- get_wc_historic_data(
+      spdf = tmp_spdf, plot_id = "id", var = target_hst_var,
+      bio_var = target_hst_bio_var, basedir = datadir, verbose = verbose_func
+    )
+
     # 2. extract historical monthly data over the plot's specific time range
-    tmp_spdf_hst <- get_wc_historical_monthly_data(spdf = tmp_spdf_hst, 
-                                                   period = c(plot_row$hst_start_year:plot_row$hst_end_year),
-                                                   basedir = datadir, verbose = verbose_func)
+    tmp_spdf_hst <- get_wc_historical_monthly_weather_data(
+      spdf = tmp_spdf_hst,
+      period = c(plot_row$hst_start_year:plot_row$hst_end_year),
+      basedir = datadir, verbose = verbose_func
+    )
     df_hst <- dplyr::bind_rows(df_hst, tmp_spdf_hst@data)
-    
+
     # 3. summarize monthly data into yearly records
     tmp_df_year <- get_wc_annual_data(df = tmp_spdf_hst@data, plot_id = "id", verbose = verbose_func)
     df_year <- dplyr::bind_rows(df_year, tmp_df_year)
-   
+
     # 4. summarize average monthly and annual variables over the whole study period
-    tmp_df_period_monthly <- get_wc_period_data(df = tmp_spdf_hst@data, plot_id = "id", grouping_var = "month", year_col = "year",
-                                                start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func)
-    tmp_df_period_yearly <- get_wc_period_data(df = tmp_df_year, plot_id = "id", grouping_var = "year", year_col = "year",
-                                               start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func)
+    tmp_df_period_monthly <- get_wc_period_data(
+      df = tmp_spdf_hst@data, plot_id = "id", grouping_var = "month", year_col = "year",
+      start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func
+    )
+    tmp_df_period_yearly <- get_wc_period_data(
+      df = tmp_df_year, plot_id = "id", grouping_var = "year", year_col = "year",
+      start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func
+    )
     tmp_df_period <- group_wc_period_data(tmp_df_period_monthly, tmp_df_period_yearly)
     df_period <- dplyr::bind_rows(df_period, tmp_df_period)
-    
+
     if (!verbose) {
       cat("OK\n")
     }
   }
-  cat("      -> Datos históricos completados con éxito.\n\n")
+  cat("      -> Historical data successfully completed.\n\n")
 } else {
-  cat("[2/5] Extrayendo y procesando datos históricos... Omitido (flag desactivado)\n\n")
+  cat("[2/5] Extracting and processing historical data... Skipped (flag disabled)\n\n")
 }
 
 # Phase 3: Future CMIP6 projections extraction
 if (run_future) {
-  cat("[3/5] Extrayendo y procesando proyecciones futuras (CMIP6)...\n")
+  cat("[3/5] Extracting and processing future projections (CMIP6)...\n")
   current_idx <- 0
   for (plot_id_val in unique_plots) {
     current_idx <- current_idx + 1
     pct <- round((current_idx / total_plots) * 100)
-    
+
     verbose_func <- verbose && (current_idx == 1)
     if (verbose_func) {
-      cat("\n[INFO] Las instrucciones de citación se mostrarán solo en esta primera parcela.\n\n")
+      cat("\n[INFO] Citation instructions will be shown only for this first plot.\n\n")
     }
-    
+
     if (!verbose) {
-      cat(sprintf("      [%d/%d] (%3d%%) Procesando parcela: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
+      cat(sprintf("      [%d/%d] (%3d%%) Processing plot: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
       flush.console()
     } else {
-      cat(sprintf("\n--- Procesando parcela [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
+      cat(sprintf("\n--- Processing plot [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
     }
-    
+
     plot_row <- df[df$id == plot_id_val, ]
     tmp_spdf <- get_spdf(df = plot_row, long_col = "longitude", lat_col = "latitude", verbose = verbose_func)
-    
+
     # 6. extract future projections climate data
-    tmp_spdf_fut <- get_wc_future_data(spdf = tmp_spdf, ssp = target_ssp, var = target_fut_var, 
-                                       basedir = datadir, verbose = verbose_func)
-    
+    tmp_spdf_fut <- get_wc_future_data(
+      spdf = tmp_spdf, ssp = target_ssp, var = target_fut_var,
+      basedir = datadir, verbose = verbose_func
+    )
+
     # Process the output depending on whether it returns a list (var = "all") or a single SPDF
     if (target_fut_var == "all") {
       tmp_df_fut_bioc <- tmp_spdf_fut[[1]]@data
@@ -267,117 +304,125 @@ if (run_future) {
       df_fut <- dplyr::bind_rows(df_fut, tmp_df_fut_clim)
       tmp_df_for_period <- tmp_df_fut_clim
     }
-    
+
     # 7. summarize future point data into multi-year projection periods
     if (!is.null(tmp_df_for_period)) {
-      tmp_df_period_fut <- get_wc_period_data(df = tmp_df_for_period, plot_id = "id", grouping_var = "period", 
-                                              period_col = "period", verbose = verbose_func)
+      tmp_df_period_fut <- get_wc_period_data(
+        df = tmp_df_for_period, plot_id = "id", grouping_var = "period",
+        period_col = "period", verbose = verbose_func
+      )
       df_period_fut <- dplyr::bind_rows(df_period_fut, tmp_df_period_fut)
     }
-    
+
     if (!verbose) {
       cat("OK\n")
     }
   }
-  cat("      -> Datos de proyecciones futuras completados con éxito.\n\n")
+  cat("      -> Future projections data successfully completed.\n\n")
 } else {
-  cat("[3/5] Extrayendo y procesando proyecciones futuras (CMIP6)... Omitido (flag desactivado)\n\n")
+  cat("[3/5] Extracting and processing future projections (CMIP6)... Skipped (flag disabled)\n\n")
 }
 
 # Phase 4: Walter-Lieth climodiagram generation
 if (run_climodiagram) {
-  cat("[4/5] Generando climogramas de Walter-Lieth...\n")
-  
+  cat("[4/5] Generating Walter-Lieth climodiagrams...\n")
+
   # Historical climodiagrams
   if (run_historical && nrow(df_hst) > 0) {
     current_idx <- 0
     for (plot_id_val in unique_plots) {
       current_idx <- current_idx + 1
       pct <- round((current_idx / total_plots) * 100)
-      
+
       if (!verbose) {
-        cat(sprintf("      [%d/%d] (%3d%%) Generando climograma histórico para: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
+        cat(sprintf("      [%d/%d] (%3d%%) Generating historical climodiagram for: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
         flush.console()
       } else {
-        cat(sprintf("\n--- Climograma histórico [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
+        cat(sprintf("\n--- Historical climodiagram [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
       }
-      
+
       plot_row <- df[df$id == plot_id_val, ]
       plot_hst_data <- df_hst[df_hst$id == plot_id_val, ]
-      
+
       folder_hst <- file.path(output_path, "climodiagrams", "historical")
       dir.create(folder_hst, recursive = TRUE, showWarnings = FALSE)
-      get_climodiagram(df = plot_hst_data, plot_id = "id", grouping_var = "year", year_col = "year", 
-                       start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year,
-                       long_col = "longitude", lat_col = "latitude", lang = lang, 
-                       plot_name = paste("df_", plot_id_val, "_hst_", sep = ""), 
-                       output_path = folder_hst, verbose = verbose)
-      
+      get_climodiagram(
+        df = plot_hst_data, plot_id = "id", grouping_var = "year", year_col = "year",
+        start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year,
+        long_col = "longitude", lat_col = "latitude", lang = lang,
+        plot_name = paste(plot_id_val, "_historical", sep = ""),
+        output_path = folder_hst, verbose = verbose
+      )
+
       if (!verbose) {
         cat("OK\n")
       }
     }
   }
-  
+
   # Future climodiagrams
   if (run_future && !is.null(target_fut_var) && target_fut_var != "bioc" && nrow(df_fut) > 0) {
     df_fut_clim_only <- df_fut[!is.na(df_fut$month) & df_fut$month != "annual", ]
-    
+
     if (nrow(df_fut_clim_only) > 0) {
       current_idx <- 0
       for (plot_id_val in unique_plots) {
         current_idx <- current_idx + 1
         pct <- round((current_idx / total_plots) * 100)
-        
+
         if (!verbose) {
-          cat(sprintf("      [%d/%d] (%3d%%) Generando climogramas futuros para: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
+          cat(sprintf("      [%d/%d] (%3d%%) Generating future climodiagrams for: %-15s ... ", current_idx, total_plots, pct, plot_id_val))
           flush.console()
         } else {
-          cat(sprintf("\n--- Climogramas futuros [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
+          cat(sprintf("\n--- Future climodiagrams [%d/%d]: %s ---\n", current_idx, total_plots, plot_id_val))
         }
-        
+
         plot_fut_data <- df_fut_clim_only[df_fut_clim_only$id == plot_id_val, ]
-        
+
         for (ssp in unique(plot_fut_data$file_ssp)) {
           df_ssp <- plot_fut_data[plot_fut_data$file_ssp == ssp, ]
           folder_fut <- file.path(output_path, "climodiagrams", "future", paste0("ssp", ssp))
           dir.create(folder_fut, recursive = TRUE, showWarnings = FALSE)
-          
+
           for (period in unique(df_ssp$period)) {
             df_ssp_period <- df_ssp[df_ssp$period == period, ]
-            
-            get_climodiagram(df = df_ssp_period, plot_id = "id", grouping_var = "period",
-                             period_col = "period", ssp = ssp,
-                             start_year = as.numeric(substr(period, 1, 4)), end_year = as.numeric(substr(period, 6, 9)),
-                             long_col = "longitude", lat_col = "latitude",
-                             lang = lang, plot_name = paste("df_", plot_id_val, "_fut_ssp_", ssp, "_period_", period,
-                                                            sep = ""), output_path = folder_fut, verbose = verbose)
+
+            get_climodiagram(
+              df = df_ssp_period, plot_id = "id", grouping_var = "period",
+              period_col = "period", ssp = ssp,
+              start_year = as.numeric(substr(period, 1, 4)), end_year = as.numeric(substr(period, 6, 9)),
+              long_col = "longitude", lat_col = "latitude",
+              lang = lang, plot_name = paste(plot_id_val, "_future_ssp_", ssp, "_period_", period,
+                sep = ""
+              ), output_path = folder_fut, verbose = verbose
+            )
           }
         }
-        
+
         if (!verbose) {
           cat("OK\n")
         }
       }
     }
   } else if (run_future && target_fut_var == "bioc") {
-    cat("      -> Aviso: Se omiten los climogramas futuros porque '--fut_var' es 'bioc'.\n")
+    cat("      -> Warning: Future climodiagrams skipped because '--fut_var' is 'bioc'.\n")
   }
-  cat("      -> Climogramas completados con éxito.\n\n")
+  cat("      -> Climodiagrams successfully completed.\n\n")
 } else {
-  cat("[4/5] Generando climogramas de Walter-Lieth... Omitido (flag desactivado)\n\n")
+  cat("[4/5] Generating Walter-Lieth climodiagrams... Skipped (flag disabled)\n\n")
 }
 
 # clean global environment of intermediate workspace objects
-rm(list = setdiff(ls(envir = .GlobalEnv), c("df", "df_hst", "df_year", "df_period", "df_fut", "df_period_fut",
-                                            "output_path", "run_historical", "run_future", "run_map", 
-                                            "run_climodiagram", "lang", "case_study_name", "verbose")), envir = .GlobalEnv)
-
+rm(list = setdiff(ls(envir = .GlobalEnv), c(
+  "df", "df_hst", "df_year", "df_period", "df_fut", "df_period_fut",
+  "output_path", "run_historical", "run_future", "run_map",
+  "run_climodiagram", "lang", "case_study_name", "verbose", "opt", "datadir"
+)), envir = .GlobalEnv)
 
 
 # Export outputs ====
 
-cat("[5/5] Exportando ficheros de resultados consolidados...\n")
+cat("[5/5] Exporting consolidated result files...\n")
 
 # Create output folder for structured data results
 folder_data <- file.path(output_path, "data")
@@ -385,13 +430,13 @@ dir.create(folder_data, recursive = TRUE, showWarnings = FALSE)
 
 # Clean up stale outputs if they are disabled in the current run
 if (!run_historical) {
-  unlink(file.path(folder_data, "df_historical_monthly.csv"))
-  unlink(file.path(folder_data, "df_historical_year.csv"))
-  unlink(file.path(folder_data, "df_historical_period.csv"))
+  unlink(file.path(folder_data, "historical_monthly_weather_data.csv"))
+  unlink(file.path(folder_data, "historical_year_climatic_data.csv"))
+  unlink(file.path(folder_data, "historical_period_climatic_data.csv"))
 }
 if (!run_future) {
-  unlink(file.path(folder_data, "df_future.csv"))
-  unlink(file.path(folder_data, "df_future_period.csv"))
+  unlink(file.path(folder_data, "future_climate_data.csv"))
+  unlink(file.path(folder_data, "future_period_climatic_data.csv"))
 }
 if (!run_historical && !run_future) {
   unlink(file.path(folder_data, "plots_extracted.geojson"))
@@ -405,19 +450,29 @@ if (!run_climodiagram) {
 
 # Helper function to clean and round dataframes for output
 clean_and_round_df <- function(df, is_period_or_year = FALSE) {
-  if (is.null(df) || nrow(df) == 0) return(df)
-  
+  if (is.null(df) || nrow(df) == 0) {
+    return(df)
+  }
+
   # Remove redundant ID column if it exists and 'id' column is also present
   if ("ID" %in% names(df) && "id" %in% names(df)) {
     df <- df[, !names(df) %in% "ID", drop = FALSE]
   }
-  
+
+  # Remove hst_start_year and hst_end_year columns if they exist
+  df <- df[, !names(df) %in% c("hst_start_year", "hst_end_year"), drop = FALSE]
+
+  # Rename file_ssp to ssp if it exists
+  if ("file_ssp" %in% names(df)) {
+    names(df)[names(df) == "file_ssp"] <- "ssp"
+  }
+
   # Coordinate columns -> round to 6 decimal places (approx. 11cm precision)
   coord_cols <- intersect(names(df), c("latitude", "longitude"))
   for (col in coord_cols) {
     df[[col]] <- round(as.numeric(df[[col]]), 6)
   }
-  
+
   # Index columns -> round to 2 decimal places
   index_cols <- intersect(names(df), c("martonne"))
   for (col in index_cols) {
@@ -425,25 +480,25 @@ clean_and_round_df <- function(df, is_period_or_year = FALSE) {
     val[is.nan(val) | is.infinite(val)] <- NA
     df[[col]] <- round(as.numeric(val), 2)
   }
-  
+
   # All other numeric columns (e.g. temperature, precipitation, elevation) -> 1 decimal place
-  exclude_cols <- c("latitude", "longitude", "martonne", "year", "month", "id", "ID", "period", "file_ssp", "model")
+  exclude_cols <- c("latitude", "longitude", "martonne", "year", "month", "id", "ID", "period", "file_ssp", "ssp", "model")
   numeric_cols <- names(df)[sapply(df, is.numeric)]
   numeric_cols <- setdiff(numeric_cols, exclude_cols)
-  
+
   for (col in numeric_cols) {
     val <- df[[col]]
     val[is.nan(val) | is.infinite(val)] <- NA
     df[[col]] <- round(as.numeric(val), 1)
   }
-  
+
   # Ensure character month formatting is consistent
   if ("month" %in% names(df)) {
     if (is.numeric(df$month)) {
       df$month <- sprintf("%02d", df$month)
     }
   }
-  
+
   return(df)
 }
 
@@ -455,42 +510,42 @@ if (run_historical) {
     df_hst <- clean_and_round_df(df_hst, is_period_or_year = FALSE)
     df_year <- clean_and_round_df(df_year, is_period_or_year = TRUE)
     df_period <- clean_and_round_df(df_period, is_period_or_year = TRUE)
-    
-    write.csv(df_hst, file = file.path(folder_data, "df_historical_monthly.csv"), row.names = FALSE)
-    write.csv(df_year, file = file.path(folder_data, "df_historical_year.csv"), row.names = FALSE)
-    write.csv(df_period, file = file.path(folder_data, "df_historical_period.csv"), row.names = FALSE)
-    
-    openxlsx::addWorksheet(wb, "historical_monthly")
-    openxlsx::writeData(wb, "historical_monthly", df_hst)
-    openxlsx::addWorksheet(wb, "historical_year")
-    openxlsx::writeData(wb, "historical_year", df_year)
-    openxlsx::addWorksheet(wb, "historical_period")
-    openxlsx::writeData(wb, "historical_period", df_period)
-    
-    cat("      -> Ficheros CSV históricos creados con éxito.\n")
+
+    write.csv(df_hst, file = file.path(folder_data, "historical_monthly_weather_data.csv"), row.names = FALSE)
+    write.csv(df_year, file = file.path(folder_data, "historical_year_climatic_data.csv"), row.names = FALSE)
+    write.csv(df_period, file = file.path(folder_data, "historical_period_climatic_data.csv"), row.names = FALSE)
+
+    openxlsx::addWorksheet(wb, "historical_monthly_weather_data")
+    openxlsx::writeData(wb, "historical_monthly_weather_data", df_hst)
+    openxlsx::addWorksheet(wb, "historical_year_climatic_data")
+    openxlsx::writeData(wb, "historical_year_climatic_data", df_year)
+    openxlsx::addWorksheet(wb, "historical_period_climatic_data")
+    openxlsx::writeData(wb, "historical_period_climatic_data", df_period)
+
+    cat("      -> Historical CSV files successfully created.\n")
   }
 }
 
 if (run_future) {
   if (nrow(df_fut) > 0) {
     df_fut <- clean_and_round_df(df_fut, is_period_or_year = FALSE)
-    write.csv(df_fut, file = file.path(folder_data, "df_future.csv"), row.names = FALSE)
-    openxlsx::addWorksheet(wb, "future")
-    openxlsx::writeData(wb, "future", df_fut)
-    cat("      -> Fichero CSV de proyecciones futuras creado con éxito.\n")
+    write.csv(df_fut, file = file.path(folder_data, "future_climate_data.csv"), row.names = FALSE)
+    openxlsx::addWorksheet(wb, "future_climate_data")
+    openxlsx::writeData(wb, "future_climate_data", df_fut)
+    cat("      -> Future projections CSV file successfully created.\n")
   }
   if (nrow(df_period_fut) > 0) {
     df_period_fut <- clean_and_round_df(df_period_fut, is_period_or_year = TRUE)
-    write.csv(df_period_fut, file = file.path(folder_data, "df_future_period.csv"), row.names = FALSE)
-    openxlsx::addWorksheet(wb, "future_period")
-    openxlsx::writeData(wb, "future_period", df_period_fut)
-    cat("      -> Fichero CSV de proyecciones futuras por período creado con éxito.\n")
+    write.csv(df_period_fut, file = file.path(folder_data, "future_period_climatic_data.csv"), row.names = FALSE)
+    openxlsx::addWorksheet(wb, "future_period_climatic_data")
+    openxlsx::writeData(wb, "future_period_climatic_data", df_period_fut)
+    cat("      -> Future projections by period CSV file successfully created.\n")
   }
 }
 
 if (length(names(wb)) > 0) {
-  openxlsx::saveWorkbook(wb, file = file.path(folder_data, "wc_output_data.xlsx"), overwrite = TRUE)
-  cat("      -> Libro Excel consolidado guardado en: data/wc_output_data.xlsx\n")
+  openxlsx::saveWorkbook(wb, file = file.path(folder_data, "all_output_data.xlsx"), overwrite = TRUE)
+  cat("      -> Consolidated Excel workbook saved in: data/all_output_data.xlsx\n")
 }
 
 # Export GeoJSON spatial data
@@ -498,18 +553,20 @@ if (nrow(df_period) > 0) {
   df_geo <- dplyr::left_join(df, df_period, by = "id", suffix = c("", ".period"))
   df_geo_sf <- sf::st_as_sf(df_geo, coords = c("longitude", "latitude"), crs = 4326)
   suppressMessages(
-    sf::st_write(df_geo_sf, file.path(folder_data, "plots_extracted.geojson"), 
-                 driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE)
+    sf::st_write(df_geo_sf, file.path(folder_data, "plots_extracted.geojson"),
+      driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE
+    )
   )
-  cat("      -> Capa espacial GeoJSON guardada en: data/plots_extracted.geojson\n")
+  cat("      -> GeoJSON spatial layer saved in: data/plots_extracted.geojson\n")
 } else if (nrow(df_period_fut) > 0) {
   df_geo <- dplyr::left_join(df, df_period_fut, by = "id", suffix = c("", ".period"))
   df_geo_sf <- sf::st_as_sf(df_geo, coords = c("longitude", "latitude"), crs = 4326)
   suppressMessages(
-    sf::st_write(df_geo_sf, file.path(folder_data, "plots_extracted.geojson"), 
-                 driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE)
+    sf::st_write(df_geo_sf, file.path(folder_data, "plots_extracted.geojson"),
+      driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE
+    )
   )
-  cat("      -> Capa espacial GeoJSON guardada en: data/plots_extracted.geojson\n")
+  cat("      -> GeoJSON spatial layer saved in: data/plots_extracted.geojson\n")
 }
 
 # Export Citations and Metadata
@@ -522,8 +579,24 @@ metadata_content <- paste0(
   "**Future Extraction Status:** ", ifelse(run_future, "Enabled", "Disabled"), "\n",
   "**Map Generation Status:** ", ifelse(run_map, "Enabled", "Disabled"), "\n",
   "**Climodiagram Generation Status:** ", ifelse(run_climodiagram, "Enabled", "Disabled"), "\n\n",
+  "## Input Parameters (opt variables)\n",
+  "- Case: ", opt$case, "\n",
+  "- Basedir: ", opt$basedir, "\n",
+  "- Data: ", datadir, "\n",
+  "- Lang: ", opt$lang, "\n",
+  "- Historical Var: ", opt$hst_var, "\n",
+  "- Historical Bio Var: ", ifelse(is.null(opt$hst_bio), "NULL", opt$hst_bio), "\n",
+  "- Future Var: ", opt$fut_var, "\n",
+  "- Future SSP: ", opt$ssp, "\n",
+  "- Map: ", opt$map, "\n",
+  "- Climodiagram: ", opt$climodiagram, "\n",
+  "- Historical: ", opt$historical, "\n",
+  "- Future: ", opt$future, "\n",
+  "- Verbose: ", opt$verbose, "\n\n",
   "## Bibliography & Citations\n\n",
   "Please consider citing the following sources in your research:\n\n",
+  "**WorldClimExtractR Repository:**\n",
+  "- Vázquez Veloso, A. (2026). WorldClimExtractR: A tool for extracting historical and future climate data from WorldClim. GitHub repository. https://github.com/AitorVazquezVeloso/WorldClimExtractR\n\n",
   "**Historical Climate Data (CRU-TS & WorldClim):**\n",
   "- Fick, S.E. and R.J. Hijmans, 2017. WorldClim 2: new 1km spatial resolution climate surfaces for global land areas. International Journal of Climatology 37 (12): 4302-4315.\n",
   "- Harris, I., Osborn, T.J., Jones, P.D., Lister, D.H. (2020). Version 4 of the CRU TS monthly high-resolution gridded multivariate climate dataset. Scientific Data 7: 109.\n\n",
@@ -536,12 +609,12 @@ metadata_content <- paste0(
   "- Hernangomez, D. (2024). giscoR: Download Map Data from GISCO API - Eurostat. R package version 0.4.0. https://CRAN.R-project.org/package=giscoR\n"
 )
 writeLines(metadata_content, metadata_file)
-cat("      -> Documento de citas y metadatos guardado en: data/citations_and_metadata.md\n")
+cat("      -> Citations and metadata document saved in: data/citations_and_metadata.md\n")
 
 # Save the R workspace execution image
-save.image(file = file.path(folder_data, "wc_environment.RData"))
-cat("      -> Imagen de entorno de R (.RData) guardada en el directorio de salida.\n\n")
+save.image(file = file.path(folder_data, "environment.rdata"))
+cat("      -> R environment image (.rdata) saved in the output directory.\n\n")
 
 cat("===========================================================\n")
-cat(" ¡Proceso completado con éxito! Todos los resultados listos.\n")
+cat(" Process completed successfully! All outputs are ready.\n")
 cat("===========================================================\n")
