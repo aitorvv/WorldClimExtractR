@@ -74,7 +74,6 @@ Promedios proyectados bajo modelos CMIP6 y rangos (mínimo/máximo) agrupados po
 ## ✨ Características
 
 * 🌍 **Extracción de Coordenadas Climáticas**: Obtención de variables bioclimáticas, elevación e históricos de temperatura y precipitación mundial.
-* 🔄 **Conversión Automática de Proyección**: Detección y conversión al vuelo de coordenadas UTM (ej. ETRS89 huso 30N) a WGS84 (longitud y latitud).
 * 📊 **Climogramas de Walter-Lieth**: Generación automática de diagramas climáticos para periodos históricos y futuros en inglés o español.
 * ⚙️ **Preparado para CLI y HPC**: Script parametrizado compatible con terminal mediante `optparse`, permitiendo ejecuciones tanto en local como en un servidor sin modificar el código interno.
 * 📁 **Consolidación en XLSX y RData**: Exportación automática de los resultados a ficheros CSV independientes, a un único libro Excel multi-pestaña (`.xlsx`) y guardado del entorno de ejecución de R (`.RData`).
@@ -158,12 +157,12 @@ graph LR
     %% template
     CaseTempl --> TemplInput["📁 input"]:::folder
     CaseTempl --> TemplReadme["📄 output_README.md"]:::file
-    TemplInput --> TemplPlots["📄 wc_plots.csv"]:::file
+    TemplInput --> TemplPlots["📄 plots.csv"]:::file
     
     %% example
     CaseEx --> ExInput["📁 input"]:::folder
     CaseEx --> ExOutput["📁 output (Ignorado en Git)"]:::folder
-    ExInput --> ExPlots["📄 wc_plots.csv"]:::file
+    ExInput --> ExPlots["📄 plots.csv"]:::file
 ```
 
 ---
@@ -173,7 +172,10 @@ graph LR
 Para ejecutar un caso de prueba utilizando la plantilla suministrada:
 
 ### Paso 1: configurar las coordenadas de entrada
-Edite el archivo de entrada en `case_studies/template/input/wc_plots.csv` indicando el identificador del punto (*id*), sus coordenadas geográficas (*latitude* y *longitude*, SRC = WGS84), y los años históricos de los que se quiere extraer la información (*hst_start_year* y *hst_end_year*; por defecto se elige el periodo 1990-2020):
+Edite el archivo de entrada en `case_studies/template/input/plots.csv` indicando el identificador del punto (*id*), sus coordenadas geográficas (*latitude* y *longitude*, SRC = WGS84), y los años históricos de los que se quiere extraer la información (*hst_start_year* y *hst_end_year*; por defecto se elige el periodo 1990-2020).
+
+> [!IMPORTANT]
+> Las coordenadas de entrada deben estar estrictamente en formato decimal WGS84 (longitud/latitud). Ya no se admite la conversión automática al vuelo de coordenadas UTM.
 
 ```csv
 id,latitude,longitude,hst_start_year,hst_end_year
@@ -232,7 +234,7 @@ El script `scripts/main.r` expone las siguientes opciones mediante argumentos:
 | `-l` | `--lang` | `character` | `en` | Idioma de los climogramas y mapas (`en` o `es`) |
 | `-e` | `--hst_var` | `character` | `elev` | Variable histórica inicial (`elev`, `bio`, `clim`, etc.) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Número de bioclimático histórico a extraer (1-19) |
-| `-f` | `--fut_var` | `character` | `clim` | Variables futuras a procesar (`all` [genera climogramas], `bioc` [solo bioclimáticos, omite climogramas], `clim` [solo clima mensual, genera climogramas]) |
+| `-f` | `--fut_var` | `character` | `clim` | Variables futuras a procesar (`all` [genera climogramas], `bio` [solo bioclimáticos, omite climogramas], `clim` [solo clima mensual, genera climogramas]) |
 | `-s` | `--ssp` | `character` | `all` | Escenarios SSP futuros (`1`, `2`, `3`, `5` o `all`) |
 | | `--historical` | `logical` | `TRUE` | Activar/desactivar la extracción de históricos |
 | | `--future` | `logical` | `TRUE` | Activar/desactivar la extracción de proyecciones futuras |

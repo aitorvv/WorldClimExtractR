@@ -10,7 +10,7 @@ Los archivos en la carpeta `output/maps/` (ej. `location_map_[lang].png`) permit
 
 ### 📜 Checklist:
 - **Alineación geográfica**: Compruebe si los puntos rojos coinciden con las ubicaciones reales esperadas (ej. un punto en Córdoba debe aparecer en el sur de España).
-- **Detección de coordenadas invertidas**: Si los puntos aparecen en el océano, en otros continentes o fuera de los límites lógicos, verifique que no se hayan intercambiado las columnas de `latitude` y `longitude` en el archivo `wc_plots.csv` de entrada.
+- **Detección de coordenadas invertidas**: Si los puntos aparecen en el océano, en otros continentes o fuera de los límites lógicos, verifique que no se hayan intercambiado las columnas de `latitude` y `longitude` en el archivo `plots.csv` de entrada.
 - **Errores de escala/zoom**: El mapa de localización se ajusta dinámicamente con un margen proporcional al rango de dispersión de tus puntos (con un amortiguador o *buffer* mínimo de 0.2 grados). Si no es así, compruebe que no haya valores extremos de coordenadas erróneas en el CSV de entrada.
 
 ---

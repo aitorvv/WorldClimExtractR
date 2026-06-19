@@ -39,45 +39,7 @@ install_and_load <- function(packages) {
 
 
 
-#' Transform coordinates to WGS84
-#'
-#' Transforms coordinates from any given CRS to WGS84 (CRS:4326).
-#'
-#' @param df Data frame containing the coordinates.
-#' @param crs_original Numeric representing the original CRS of coordinates (e.g., 25830).
-#' @param x_col Character representing column name for the x-coordinate (default "X_UTM").
-#' @param y_col Character representing column name for the y-coordinate (default "Y_UTM").
-#' @param crs_target Numeric representing the target CRS (default 4326 = WGS84).
-#' @param geometry Logical to keep or remove the geometry column (default TRUE).
-#' @return Data frame with transformed longitude and latitude columns.
-#' @examples
-#' df_wgs84 <- get_wgs84_coords(df, crs_original = 25830, geometry = FALSE)
-#' @export
-get_wgs84_coords <- function(df, crs_original, x_col = "X_UTM", y_col = "Y_UTM",
-                             crs_target = 4326, geometry = TRUE, verbose = TRUE) {
-  # create sf object
-  df_sf <- sf::st_as_sf(df, coords = c(x_col, y_col), crs = crs_original)
-  
-  # transform to target CRS
-  df_sf_new <- sf::st_transform(df_sf, crs = crs_target)
-  
-  # extract coordinates on separate columns
-  df_sf_new <- cbind(df_sf_new, sf::st_coordinates(df_sf_new))
-  
-  # rename columns
-  df_sf_new <- dplyr::rename(df_sf_new, longitude = X, latitude = Y)
-  df <- cbind(df, df_sf_new[, c("longitude", "latitude")])
-  
-  if (geometry == FALSE) {
-    df <- dplyr::select(df, -geometry)
-  }
-  
-  if (verbose) {
-    cat(paste("Coordinates transformed from CRS", crs_original, "to CRS", crs_target, "successfully!\n"))
-  }
-  
-  return(df)
-}
+
 
 
 
@@ -481,7 +443,7 @@ get_martonne <- function(df, prec = 'prec', tavg = 'tavg', verbose = TRUE) {
 #' @param spdf SpatialPointsDataFrame object containing plot coordinates (WGS84).
 #' @param model Character representing future model name (default 'MIROC6').
 #' @param ssp Character representing SSP path (default 'all'; options: 1, 2, 3, 5, all).
-#' @param var Character representing desired variable group (default 'all'; options: 'all', 'bioc', 'clim').
+#' @param var Character representing desired variable group (default 'all'; options: 'all', 'bio', 'clim').
 #' @param basedir Character representing root directory of the repository (default getwd()).
 #' @param verbose Logical to print the citation of the data (default TRUE).
 #' @return SpatialPointsDataFrame with the extracted future projections.
@@ -515,10 +477,10 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
     var <- c("bioc", "prec", "tmax", "tmin")
   } else if (var == "clim") {
     var <- c("prec", "tmax", "tmin")
-  } else if (var == "bioc") {
+  } else if (var == "bio" || var == "bioc") {
     var <- "bioc"
   } else {
-    stop("Invalid variable. Please, use \"all\", \"bioc\", or \"clim\" at \"var\" argument")
+    stop("Invalid variable. Please, use \"all\", \"bio\", or \"clim\" at \"var\" argument")
   }
   
   tmp <- tibble::tibble()
@@ -613,11 +575,17 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
   
   if (verbose) {
     cat("You could cite this dataset as follows:\n")
-    cat("Downscaled future climate projections were obtained from WorldClim source using the Coupled Model Intercomparison Project Phase 6 (CMIP6) (Petrie et al. 2021). Climate data was predicted by the 6th version of the Model for Interdisciplinary Research on Climate (MIROC6) (Tatebe et al. 2019) under the Shared Socioeconomic Pathway 2 (SSP2), which represents a “middle of the road” future climate scenario (O’Neill et al. 2017).\n")
-    cat("References:\n")
-    cat("Petrie, R., Denvil, S., Ames, S., Levavasseur, G., Fiore, S., Allen, C., Antonio, F., Berger, K., Bretonnière, P.-A., Cinquini, L., Dart, E., Dwarakanath, P., Druken, K., Evans, B., Franchistéguy, L., Gardoll, S., Gerbier, E., Greenslade, M., Hassell, D., … Wagner, R. (2021). Coordinating an operational data distribution network for CMIP6 data. Geoscientific Model Development, 14(1), 629-644. https://doi.org/10.5194/gmd-14-629-2021\n")
-    cat("Tatebe, H., Ogura, T., Nitta, T., Komuro, Y., Ogochi, K., Takemura, T., Sudo, K., Sekiguchi, M., Abe, M., Saito, F., Chikira, M., Watanabe, S., Mori, M., Hirota, N., Kawatani, Y., Mochizuki, T., Yoshimura, K., Takata, K., O’ishi, R., … Kimoto, M. (2019). Description and basic evaluation of simulated mean state, internal variability, and climate sensitivity in MIROC6. Geoscientific Model Development, 12(7), 2727-2765. https://doi.org/10.5194/gmd-12-2727-2019\n")
-    cat("O’Neill, B. C., Kriegler, E., Ebi, K. L., Kemp-Benedict, E., Riahi, K., Rothman, D. S., & Solecki, W. (2017). The roads ahead: Narratives for shared socioeconomic pathways describing world futures in the 21st century. Global Environmental Change, 42, 169-180. https://doi.org/10.1016/j.gloenvcha.2015.01.004\n")
+    if (model == "MIROC6") {
+      cat("Downscaled future climate projections were obtained from WorldClim source using the Coupled Model Intercomparison Project Phase 6 (CMIP6) (Petrie et al. 2021). Climate data was predicted by the 6th version of the Model for Interdisciplinary Research on Climate (MIROC6) (Tatebe et al. 2019) under the Shared Socioeconomic Pathway 2 (SSP2), which represents a “middle of the road” future climate scenario (O’Neill et al. 2017).\n")
+      cat("References:\n")
+      cat("Petrie, R., Denvil, S., Ames, S., Levavasseur, G., Fiore, S., Allen, C., Antonio, F., Berger, K., Bretonnière, P.-A., Cinquini, L., Dart, E., Dwarakanath, P., Druken, K., Evans, B., Franchistéguy, L., Gardoll, S., Gerbier, E., Greenslade, M., Hassell, D., … Wagner, R. (2021). Coordinating an operational data distribution network for CMIP6 data. Geoscientific Model Development, 14(1), 629-644. https://doi.org/10.5194/gmd-14-629-2021\n")
+      cat("Tatebe, H., Ogura, T., Nitta, T., Komuro, Y., Ogochi, K., Takemura, T., Sudo, K., Sekiguchi, M., Abe, M., Saito, F., Chikira, M., Watanabe, S., Mori, M., Hirota, N., Kawatani, Y., Mochizuki, T., Yoshimura, K., Takata, K., O’ishi, R., … Kimoto, M. (2019). Description and basic evaluation of simulated mean state, internal variability, and climate sensitivity in MIROC6. Geoscientific Model Development, 12(7), 2727-2765. https://doi.org/10.5194/gmd-12-2727-2019\n")
+      cat("O’Neill, B. C., Kriegler, E., Ebi, K. L., Kemp-Benedict, E., Riahi, K., Rothman, D. S., & Solecki, W. (2017). The roads ahead: Narratives for shared socioeconomic pathways describing world futures in the 21st century. Global Environmental Change, 42, 169-180. https://doi.org/10.1016/j.gloenvcha.2015.01.004\n")
+    } else {
+      cat(paste0("Downscaled future climate projections were obtained from WorldClim source using the Coupled Model Intercomparison Project Phase 6 (CMIP6) (Petrie et al. 2021). Climate data was predicted by the ", model, " model.\n"))
+      cat("References:\n")
+      cat("Petrie, R., Denvil, S., Ames, S., Levavasseur, G., Fiore, S., Allen, C., Antonio, F., Berger, K., Bretonnière, P.-A., Cinquini, L., Dart, E., Dwarakanath, P., Druken, K., Evans, B., Franchistéguy, L., Gardoll, S., Gerbier, E., Greenslade, M., Hassell, D., … Wagner, R. (2021). Coordinating an operational data distribution network for CMIP6 data. Geoscientific Model Development, 14(1), 629-644. https://doi.org/10.5194/gmd-14-629-2021\n")
+    }
     cat("\n")
     cat("Note from WorldClim website:\n")
     cat("Include in publications an acknowledgment with language similar to: “We acknowledge the World Climate Research Programme, which, through its Working Group on Coupled Modelling, coordinated and promoted CMIP6. We thank the climate modeling groups for producing and making available their model output, the Earth System Grid Federation (ESGF) for archiving the data and providing access, and the multiple funding agencies who support CMIP6 and ESGF.”\n")
@@ -630,7 +598,7 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
   } else if (identical(var, c("prec", "tmax", "tmin"))) {
     return(new_spdf_clim)
   } else {
-    stop("Invalid variable. Please, use \"all\", \"bioc\", or \"clim\" at \"var\" argument")
+    stop("Invalid variable. Please, use \"all\", \"bio\", or \"clim\" at \"var\" argument")
   }
 }
 

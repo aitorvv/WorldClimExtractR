@@ -49,12 +49,17 @@ option_list <- list(
   ),
   make_option(c("-f", "--fut_var"),
     type = "character", default = "clim",
-    help = "Future variables to extract ('all', 'bioc', 'clim') [default: %default]",
+    help = "Future variables to extract ('all', 'bio', 'clim') [default: %default]",
     metavar = "character"
   ),
   make_option(c("-s", "--ssp"),
     type = "character", default = "2",
     help = "Shared Socioeconomic Pathways to process (1, 2, 3, 5 or 'all') [default: %default]",
+    metavar = "character"
+  ),
+  make_option(c("-m", "--model"),
+    type = "character", default = "MIROC6",
+    help = "Future climate model to use (e.g., 'MIROC6', 'ACCESS-CM2', 'BCC-CSM2-MR') [default: %default]",
     metavar = "character"
   ),
   make_option(c("--map"),
@@ -105,9 +110,10 @@ target_hst_var <- opt$hst_var
 target_hst_bio_var <- opt$hst_bio
 target_fut_var <- opt$fut_var
 target_ssp <- opt$ssp
+target_model <- opt$model
 
 # Construct dynamic file paths
-input_file <- file.path(basedir, "case_studies", case_study_name, "input", "wc_plots.csv")
+input_file <- file.path(basedir, "case_studies", case_study_name, "input", "plots.csv")
 output_path <- file.path(basedir, "case_studies", case_study_name, "output")
 
 # Load functions from scripts directory
@@ -123,7 +129,7 @@ install_and_load(c("raster", "tidyverse", "eurostat", "giscoR", "sf", "openxlsx"
 # Check if case study folder exists, otherwise fallback to template
 if (!file.exists(input_file)) {
   cat("WARNING: Input file not found for case study '", case_study_name, "'. Using template instead...\n", sep = "")
-  input_file <- file.path(basedir, "case_studies", "template", "input", "wc_plots.csv")
+  input_file <- file.path(basedir, "case_studies", "template", "input", "plots.csv")
   output_path <- file.path(basedir, "case_studies", "template", "output")
 }
 
@@ -161,16 +167,9 @@ cat(sprintf(
 cat("[INFO] Total plots to process: ", length(unique(df$id)), "\n", sep = "")
 cat("===========================================================\n\n")
 
-# Automatically convert coordinate projection if input is in UTM system
+# Validate input coordinates strictly (must contain longitude and latitude in WGS84 format)
 if (!"longitude" %in% colnames(df) || !"latitude" %in% colnames(df)) {
-  if (verbose) cat("Longitude and latitude columns not found. Checking for UTM columns...\n")
-  if ("X_UTM" %in% colnames(df) && "Y_UTM" %in% colnames(df)) {
-    df <- get_wgs84_coords(df, crs_original = 25830, x_col = "X_UTM", y_col = "Y_UTM", geometry = FALSE, verbose = verbose)
-  } else if ("x" %in% colnames(df) && "y" %in% colnames(df)) {
-    df <- get_wgs84_coords(df, crs_original = 25830, x_col = "x", y_col = "y", geometry = FALSE, verbose = verbose)
-  } else {
-    stop("Error: Input CSV must contain 'longitude' and 'latitude' (WGS84) or UTM ('X_UTM'/'Y_UTM' or 'x'/'y') coordinate columns.")
-  }
+  stop("Error: Input CSV must strictly contain 'longitude' and 'latitude' (WGS84) coordinate columns.")
 }
 
 # Generate verification maps ====
@@ -285,19 +284,19 @@ if (run_future) {
 
     # 6. extract future projections climate data
     tmp_spdf_fut <- get_wc_future_data(
-      spdf = tmp_spdf, ssp = target_ssp, var = target_fut_var,
+      spdf = tmp_spdf, model = target_model, ssp = target_ssp, var = target_fut_var,
       basedir = datadir, verbose = verbose_func
     )
 
     # Process the output depending on whether it returns a list (var = "all") or a single SPDF
     if (target_fut_var == "all") {
-      tmp_df_fut_bioc <- tmp_spdf_fut[[1]]@data
+      tmp_df_fut_bio <- tmp_spdf_fut[[1]]@data
       tmp_df_fut_clim <- tmp_spdf_fut[[2]]@data
-      df_fut <- dplyr::bind_rows(df_fut, tmp_df_fut_bioc, tmp_df_fut_clim)
+      df_fut <- dplyr::bind_rows(df_fut, tmp_df_fut_bio, tmp_df_fut_clim)
       tmp_df_for_period <- tmp_df_fut_clim
-    } else if (target_fut_var == "bioc") {
-      tmp_df_fut_bioc <- tmp_spdf_fut@data
-      df_fut <- dplyr::bind_rows(df_fut, tmp_df_fut_bioc)
+    } else if (target_fut_var == "bio" || target_fut_var == "bioc") {
+      tmp_df_fut_bio <- tmp_spdf_fut@data
+      df_fut <- dplyr::bind_rows(df_fut, tmp_df_fut_bio)
       tmp_df_for_period <- NULL
     } else {
       tmp_df_fut_clim <- tmp_spdf_fut@data
@@ -361,7 +360,7 @@ if (run_climodiagram) {
   }
 
   # Future climodiagrams
-  if (run_future && !is.null(target_fut_var) && target_fut_var != "bioc" && nrow(df_fut) > 0) {
+  if (run_future && !is.null(target_fut_var) && target_fut_var != "bio" && target_fut_var != "bioc" && nrow(df_fut) > 0) {
     df_fut_clim_only <- df_fut[!is.na(df_fut$month) & df_fut$month != "annual", ]
 
     if (nrow(df_fut_clim_only) > 0) {
@@ -404,8 +403,8 @@ if (run_climodiagram) {
         }
       }
     }
-  } else if (run_future && target_fut_var == "bioc") {
-    cat("      -> Warning: Future climodiagrams skipped because '--fut_var' is 'bioc'.\n")
+  } else if (run_future && (target_fut_var == "bio" || target_fut_var == "bioc")) {
+    cat("      -> Warning: Future climodiagrams skipped because '--fut_var' is 'bio'.\n")
   }
   cat("      -> Climodiagrams successfully completed.\n\n")
 } else {
@@ -588,6 +587,7 @@ metadata_content <- paste0(
   "- Historical Bio Var: ", ifelse(is.null(opt$hst_bio), "NULL", opt$hst_bio), "\n",
   "- Future Var: ", opt$fut_var, "\n",
   "- Future SSP: ", opt$ssp, "\n",
+  "- Future Model: ", opt$model, "\n",
   "- Map: ", opt$map, "\n",
   "- Climodiagram: ", opt$climodiagram, "\n",
   "- Historical: ", opt$historical, "\n",

@@ -74,7 +74,6 @@ CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/p
 ## ✨ Features
 
 * 🌍 **Coordinate Climate Extraction**: Retrieves bioclimatic, elevation, and historical monthly temperature and precipitation data worldwide.
-* 🔄 **On-the-Fly Projection Conversion**: Detects and converts local coordinate systems (e.g., UTM Zone 30N / ETRS89) to WGS84 (longitude and latitude) automatically.
 * 📊 **Walter-Lieth Climate Diagrams**: Generates standardized climate diagrams for historical and future periods in English or Spanish.
 * ⚙️ **CLI & HPC Ready**: A parameterized script compatible with terminal environments using `optparse`, allowing local and HPC execution without internal code modifications.
 * 📁 **Consolidated Formats**: Exports results to individual CSVs, a multi-sheet Excel workbook (`.xlsx`), a spatial vector file (`.geojson`), a metadata report with citations, and saves the R session environment (`.RData`).
@@ -159,12 +158,12 @@ graph LR
     %% template/
     CaseTempl --> TemplInput["📁 input"]:::folder
     CaseTempl --> TemplReadme["📄 output_README.md"]:::file
-    TemplInput --> TemplPlots["📄 wc_plots.csv"]:::file
+    TemplInput --> TemplPlots["📄 plots.csv"]:::file
     
     %% example/
     CaseEx --> ExInput["📁 input"]:::folder
     CaseEx --> ExOutput["📁 output (Git-ignored)"]:::folder
-    ExInput --> ExPlots["📄 wc_plots.csv"]:::file
+    ExInput --> ExPlots["📄 plots.csv"]:::file
 ```
 
 ---
@@ -174,7 +173,10 @@ graph LR
 To run a test case using the provided template case study:
 
 ### Step 1: configure your input coordinates
-Edit the input CSV file at `case_studies/template/input/wc_plots.csv`, specifying the point identifiers (*id*), coordinates (*latitude* and *longitude*, CRS = WGS84), and the historical years of interest to extract (*hst_start_year* and *hst_end_year*; defaults to the 1990-2020 period):
+Edit the input CSV file at `case_studies/template/input/plots.csv`, specifying the point identifiers (*id*), coordinates (*latitude* and *longitude*, CRS = WGS84), and the historical years of interest to extract (*hst_start_year* and *hst_end_year*; defaults to the 1990-2020 period).
+
+> [!IMPORTANT]
+> The input coordinates must be strictly in WGS84 decimal format (longitude/latitude). Automatic on-the-fly conversion of UTM coordinates is no longer supported.
 
 ```csv
 id,latitude,longitude,hst_start_year,hst_end_year
@@ -232,7 +234,7 @@ The `scripts/main.r` script supports the following CLI arguments:
 | `-l` | `--lang` | `character` | `en` | Language for charts and maps (`en` or `es`) |
 | `-e` | `--hst_var` | `character` | `elev` | Starting historical variable to extract (`elev`, `bio`, `clim`) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Specific historical bioclimatic variable index (1-19) |
-| `-f` | `--fut_var` | `character` | `clim` | Future CMIP6 variable to extract (`all` [generates climodiagrams], `bioc` [bioclimatic variables only, skips climodiagrams], `clim` [monthly climate weather only, generates climodiagrams]) |
+| `-f` | `--fut_var` | `character` | `clim` | Future CMIP6 variable to extract (`all` [generates climodiagrams], `bio` [bioclimatic variables only, skips climodiagrams], `clim` [monthly climate weather only, generates climodiagrams]) |
 | `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `5`, or `all`) |
 | | `--historical` | `logical` | `TRUE` | Enable/disable historical climate extraction |
 | | `--future` | `logical` | `TRUE` | Enable/disable future projection extraction |

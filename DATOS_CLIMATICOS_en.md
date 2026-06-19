@@ -104,6 +104,7 @@ Represent future climate simulations projected by 20-year periods and grouped by
 * Example: `wc2.1_30s_bioc_MIROC6_ssp245_2021-2040.tif` (MIROC6 model projection for the SSP2 scenario in the 2021-2040 period).
   * **Variable (`bioc`, `prec`, `tmax`, `tmin`)**: Extracted from characters 11 to 14 of the filename.
     * *Note on bands*: Future projection files are multiband. The `bioc` layer contains 19 bands (the 19 bioclimatic variables), while `prec`, `tmax`, and `tmin` contain 12 bands corresponding to the 12 calendar months.
+    * *Note on CLI parameters*: Although WorldClim files use the prefix `bioc` in their names, the `--fut_var` console parameter has been homogenized to `bio` (it also accepts `bioc` for backward compatibility) to maintain consistency with historical variables (`--hst_var bio`).
   * **SSP Scenario (scenario code, e.g., `2`)**: Extracted from the character at position 26 (e.g., the character `2` in `ssp245`).
   * **Projected Period (e.g., `2021-2040`)**: Extracted from positions 30 to 38 of the filename. The covered 20-year periods are: `2021-2040`, `2041-2060`, `2061-2080`, `2081-2100`.
 

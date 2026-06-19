@@ -10,7 +10,7 @@ Files in the `output/maps/` folder (e.g., `location_map_[lang].png`) allow you t
 
 ### 📜 Checklist:
 - **Geographic alignment**: Verify that the red points match the expected physical locations (e.g., a point in Córdoba should appear in southern Spain).
-- **Inverted coordinates check**: If the points appear in the ocean, on other continents, or outside logical boundaries, verify that the `latitude` and `longitude` columns were not swapped in the input `wc_plots.csv` file.
+- **Inverted coordinates check**: If the points appear in the ocean, on other continents, or outside logical boundaries, verify that the `latitude` and `longitude` columns were not swapped in the input `plots.csv` file.
 - **Scale/zoom level errors**: The location map automatically adjusts dynamically with a margin proportional to the coordinate range of your points (with a minimum buffer of 0.2 degrees). If not, check for coordinate typos or extreme outliers in the input CSV.
 
 ---
