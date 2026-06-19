@@ -1,11 +1,60 @@
 # WorldClimExtractR
 
 [![R Version](https://img.shields.io/badge/R-%3E%3D%204.0.0-blue.svg)](https://www.r-project.org/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Licencia: MIT](https://img.shields.io/badge/Licencia-MIT-green.svg)](LICENSE)
+[![Origen de Datos: WorldClim](https://img.shields.io/badge/Origen--Datos-WorldClim%20v2.1-orange.svg)](https://www.worldclim.org/)
+[![Soporte CMIP6](https://img.shields.io/badge/Proyecciones-CMIP6-purple.svg)](https://www.worldclim.org/data/cmip6.html)
+[![Climogramas Walter-Lieth](https://img.shields.io/badge/Climogramas-Walter--Lieth-darkgreen.svg)](#-galería-visual-y-resultados-generados)
 
 ---
 
 **WorldClimExtractR** es una herramienta ágil y parametrizada en R para extraer, procesar y resumir datos climáticos históricos y de futuras proyecciones (CMIP6) de WorldClim a partir de coordenadas geográficas en cualquier lugar del mundo.
+
+---
+
+## 🎨 Galería Visual y Resultados Generados
+
+A continuación se muestra un ejemplo ilustrativo con 6 parcelas de prueba distribuidas por el mundo, mostrando tanto la verificación espacial de la localización como los gráficos de síntesis climática obtenidos:
+
+| 📍 Mapa de Verificación Geográfica | 📊 Climograma Walter-Lieth Autogenerado |
+| :---: | :---: |
+| <img src="documentation/images/location_map_example.png" width="100%" alt="Mapa de Localización" /> | <img src="documentation/images/climodiagram_example.png" width="100%" alt="Climograma Walter-Lieth" /> |
+| *Mapa adaptativo a la escala del estudio mostrando los puntos de muestreo (regional/europea/global).* | *Evolución de temperatura y precipitación mensual para el periodo histórico seleccionado.* |
+
+---
+
+## 📊 Previsualización de Datos Tabulares
+
+A continuación se expone una muestra de la estructura de las tablas de salida que la herramienta genera automáticamente en formatos `CSV` y `XLSX` (libro Excel unificado):
+
+### A. Datos Históricos Mensuales (`df_historical_monthly.csv`)
+Primeras filas con las variables climáticas mensuales extraídas (precipitación, temperaturas extremas y medias):
+
+| id | latitude | longitude | elev | year | month | prec | tmax | tmin | tavg |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 01 | 48.5 | 8.0 | -3.0 | 2.5 |
+| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 02 | 56.3 | 7.0 | -2.0 | 2.5 |
+| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 03 | 96.7 | 12.0 | 0.0 | 6.0 |
+
+### B. Resumen del Periodo Histórico (`df_historical_period.csv`)
+Valores consolidados por periodo e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
+
+| id | period | month | tmin | tmax | tavg | prec | martonne |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
+| plot_2 | 2015_2021 | annual | 8.2 | 20.8 | 14.5 | 1392.9 | 56.81 |
+
+### C. Proyecciones Climáticas de Futuro (`df_future_period.csv`)
+Promedios proyectados bajo modelos CMIP6 y rangos (mínimo/máximo) agrupados por periodo/década y escenario SSP:
+
+| id | model | file_ssp | period | tmin | tmax | tavg | prec | martonne |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | MIROC6 | 1 | 2021-2040 | 7.1 | 20.0 | 13.6 | 495.0 | 21.02 |
+| plot_1 | MIROC6 | 1 | 2041-2060 | 7.5 | 20.5 | 14.0 | 490.0 | 20.40 |
+| plot_1 | MIROC6 | 2 | 2021-2040 | 7.1 | 19.8 | 13.5 | 502.0 | 21.39 |
+
+> [!NOTE]
+> Las tablas de proyecciones futuras contienen columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los márgenes de incertidumbre de cada periodo proyectado.
 
 ---
 
@@ -27,13 +76,13 @@
 * 🌍 **Extracción de Coordenadas Climáticas**: Obtención de variables bioclimáticas, elevación e históricos de temperatura y precipitación mundial.
 * 🔄 **Conversión Automática de Proyección**: Detección y conversión al vuelo de coordenadas UTM (ej. ETRS89 huso 30N) a WGS84 (longitud y latitud).
 * 📊 **Climogramas de Walter-Lieth**: Generación automática de diagramas climáticos para periodos históricos y futuros en inglés o español.
-* ⚙️ **Preparado para CLI y HPC**: Script parametrizado compatible con terminal mediante `optparse`, permitiendo ejecuciones tanto en local como en el servidor HPC del iuFOR sin modificar el código interno.
+* ⚙️ **Preparado para CLI y HPC**: Script parametrizado compatible con terminal mediante `optparse`, permitiendo ejecuciones tanto en local como en un servidor sin modificar el código interno.
 * 📁 **Consolidación en XLSX y RData**: Exportación automática de los resultados a ficheros CSV independientes, a un único libro Excel multi-pestaña (`.xlsx`) y guardado del entorno de ejecución de R (`.RData`).
 
 ---
-
 ## 📦 Requisitos
 
+### Dependencias del Sistema
 Asegúrese de contar con R instalado (versión `>= 4.0.0`) y las librerías del sistema necesarias para dependencias geoespaciales como `sf`:
 
 ```bash
@@ -43,12 +92,16 @@ sudo apt-get install libgdal-dev libgeos-dev libproj-dev libudunits2-dev
 
 ### Paquetes de R
 El script principal verifica e instala automáticamente las librerías de R faltantes:
-* `raster`
-* `tidyverse`
-* `sf`
 * `eurostat`
+* `giscoR`
 * `openxlsx`
 * `optparse`
+* `raster`
+* `sf`
+* `tidyverse`
+
+### Datos Climáticos (.tif)
+Es necesario descargar todos los archivos `.tif` necesarios para obtener los datos, lo cual puede hacer desde la web oficial de [WorldClim](https://www.worldclim.org/data/index.html). Para conocer la estructura de carpetas y nomenclatura de estas capas, consulte la [Guía de configuración de datos espaciales (DATOS_CLIMATICOS.md)](DATOS_CLIMATICOS.md).
 
 ---
 
@@ -56,28 +109,61 @@ El script principal verifica e instala automáticamente las librerías de R falt
 
 El repositorio mantiene una estructura limpia de Git, excluyendo del control de versiones los datasets espaciales pesados y los casos de ejecución de los usuarios:
 
-```text
-WorldClimExtractR/
-├── .gitignore                         # Excluye rasters, entornos R y carpetas de salida locales
-├── README.md                          # Documentación del proyecto
-├── DATOS_CLIMATICOS.md                # Guía de descarga y nomenclatura de rasters .tif
-├── WorldClimExtractR.Rproj            # Archivo de proyecto RStudio
-├── documentation/                     # Documentación de variables de WorldClim
-│   └── *.pdf
-├── API/                               # Ejemplos de uso de la API
-│   └── *.pdf
-├── scripts/                           # Código fuente R
-│   ├── wc_main.r                      # Script principal unificado (CLI / Interactivo)
-│   └── wc_functions.r                 # Funciones de extracción de datos y graficado
-├── climate_data/                      # Directorio común para datos climáticos (vacío en Git)
-│   ├── historical_climate_data/
-│   ├── historical_monthly_data/
-│   └── future_climate_data/
-└── case_studies/                      # Almacén de estudios de caso
-    └── template/                      # Caso plantilla de referencia (seguido en Git)
-        ├── input/
-        │   └── wc_plots.csv           # Archivo de coordenadas de entrada
-        └── output/                    # Carpeta de mapas, climogramas y Excel exportados
+```mermaid
+graph LR
+    %% Definición de estilos de nodos
+    classDef folder fill:#ffe0b2,stroke:#fb8c00,stroke-width:1px,color:#000000;
+    classDef file fill:#ffffff,stroke:#b0bec5,stroke-width:1px,color:#000000;
+    classDef mainFile fill:#e8f5e9,stroke:#4caf50,stroke-width:2px,color:#000000;
+    
+    Root["📁 WorldClimExtractR (Raíz)"]:::folder
+    
+    %% Carpetas principales
+    Root --> DirScripts["📁 scripts<br>(Código R)"]:::folder
+    Root --> DirData["📁 climate_data<br>(Capas Raster .tif - Ignorado)"]:::folder
+    Root --> DirDoc["📁 documentation<br>(Manuales y PDFs)"]:::folder
+    Root --> DirCases["📁 case_studies<br>(Estudios de caso)"]:::folder
+    
+    %% Archivos en la raíz
+    Root --> ReadmeEs["📄 README.md (Doc. principal)"]:::mainFile
+    Root --> ReadmeEn["📄 README_en.md (Doc. inglés)"]:::file
+    Root --> DatosCliEs["📄 DATOS_CLIMATICOS.md"]:::file
+    Root --> DatosCliEn["📄 DATOS_CLIMATICOS_en.md"]:::file
+    Root --> GuiaVerEs["📄 GUIA_VERIFICACION.md"]:::file
+    Root --> GuiaVerEn["📄 GUIA_VERIFICACION_en.md"]:::file
+    Root --> Cit["📄 CITATION.md"]:::file
+    Root --> Cont["📄 CONTRIBUTING.md"]:::file
+    Root --> Lic["📄 LICENSE"]:::file
+    Root --> Proj["📄 WorldClimExtractR.Rproj"]:::file
+    Root --> Gitignore["📄 .gitignore"]:::file
+    
+    %% Subestructura de scripts
+    DirScripts --> ScriptMain["📄 wc_main.r (CLI / Interactivo)"]:::file
+    DirScripts --> ScriptFuncs["📄 wc_functions.r (Funciones)"]:::file
+    
+    %% Subestructura de climate_data
+    DirData --> DataHist["📁 historical_climate_data"]:::folder
+    DirData --> DataMonthly["📁 historical_monthly_data"]:::folder
+    DirData --> DataFuture["📁 future_climate_data"]:::folder
+    
+    %% Subestructura de documentation
+    DirDoc --> DocGenEs["📄 SALIDAS_GENERADAS.md"]:::file
+    DirDoc --> DocGenEn["📄 GENERATED_OUTPUTS.md"]:::file
+    DirDoc --> DocPdfs["📄 *.pdf (Guías oficiales WorldClim)"]:::file
+    
+    %% Subestructura de case_studies
+    DirCases --> CaseTempl["📁 template (Plantilla básica)"]:::folder
+    DirCases --> CaseEx["📁 example (Ejemplo ejecutado)"]:::folder
+    
+    %% template
+    CaseTempl --> TemplInput["📁 input"]:::folder
+    CaseTempl --> TemplReadme["📄 output_README.md"]:::file
+    TemplInput --> TemplPlots["📄 wc_plots.csv"]:::file
+    
+    %% example
+    CaseEx --> ExInput["📁 input"]:::folder
+    CaseEx --> ExOutput["📁 output (Ignorado en Git)"]:::folder
+    ExInput --> ExPlots["📄 wc_plots.csv"]:::file
 ```
 
 ---
@@ -87,12 +173,12 @@ WorldClimExtractR/
 Para ejecutar un caso de prueba utilizando la plantilla suministrada:
 
 ### Paso 1: Configurar las coordenadas de entrada
-Edite el archivo de entrada en `case_studies/template/input/wc_plots.csv` indicando el identificador del punto, sus coordenadas geográficas, y los años históricos de estudio:
+Edite el archivo de entrada en `case_studies/template/input/wc_plots.csv` indicando el identificador del punto (*id*), sus coordenadas geográficas (*latitude* y *longitude*, SRC = WGS84), y los años históricos de los que se quiere extraer la información (*hst_start_year* y *hst_end_year*; por defecto se elige el periodo 1990-2020):
 
 ```csv
 id,latitude,longitude,hst_start_year,hst_end_year
-Cordoba,37.90322,-2.91116,2015,2021
-Valdepoza,42.60910,-4.77280,1990,2020
+plot_1,37.90322,-2.91116,2015,2021
+plot_2,42.60910,-4.77280,1990,2020
 ```
 
 ### Paso 2: Organizar los archivos Raster (.tif)
@@ -101,18 +187,18 @@ Asegúrese de haber descargado y ubicado las capas de WorldClim siguiendo el esq
 2. **Un disco externo o directorio alternativo**: Almacenando la estructura de carpetas climáticas en una ubicación externa y pasándole la ruta al script mediante el flag `--data` (evitando ocupar espacio en el disco principal).
 
 ### Paso 3: Ejecutar el script por consola
-Abra su terminal y ejecute el siguiente comando indicando el caso de estudio plantilla, el directorio de trabajo actual y el idioma español para las gráficas:
+Abra su terminal y ejecute el script principal. Puede consultar los parámetros y flags disponibles en la sección de [Opciones de Ejecución por Consola (CLI)](#⚙️-opciones-de-ejecución-por-consola-cli) (también visibles con el comando `Rscript scripts/wc_main.r --help`):
 
 ```bash
-# Ejecución por defecto (buscando los TIFFs en la raíz del proyecto)
+# Ejecución básica (buscando las capas TIFFs en la carpeta climate_data del proyecto)
 Rscript scripts/wc_main.r --case "template" --basedir "." --lang "es" --hst_var "elev" --fut_var "clim" --ssp "all"
 
-# Ejecución especificando un disco externo o ruta alternativa de datos climáticos
-Rscript scripts/wc_main.r --case "template" --basedir "." --data "/ruta/a/mi/disco_externo" --lang "es"
+# Ejecución indicando una ruta externa alternativa donde están guardados los TIFFs
+Rscript scripts/wc_main.r --case "template" --basedir "." --data "/ruta/a/mi/disco_externo/climate_data/" --lang "es"
 ```
 
 ### Paso 4: Resultados Generados
-Tras la finalización del script, consulte la carpeta `case_studies/template/output/`. Para verificar visualmente la exactitud geográfica y de los climogramas, consulte la [Guía de Verificación de Resultados (GUIA_VERIFICACION.md)](GUIA_VERIFICACION.md).
+Tras la finalización del script, consulte la carpeta `case_studies/template/output/` (o la carpeta `output/` equivalente de su caso de estudio si ha duplicado la plantilla para otro caso). Para verificar visualmente la exactitud geográfica y de los climogramas, consulte la [Guía de Verificación de Resultados (GUIA_VERIFICACION.md)](GUIA_VERIFICACION.md).
 
 Los resultados se distribuyen en las siguientes carpetas:
 
@@ -124,12 +210,12 @@ Los resultados se distribuyen en las siguientes carpetas:
   * `wc_output_data.xlsx`: Libro Excel multi-pestaña consolidando todas las tablas anteriores.
   * `plots_extracted.geojson`: Capa vectorial con los puntos extraídos y sus sumarios de periodo para uso en GIS.
   * `citations_and_metadata.md`: Documento con metadatos de ejecución e instrucciones bibliográficas de citación.
-  * `wc_environment.RData`: Imagen de R con todas las variables cargadas para análisis posterior en RStudio.
+  * `wc_environment.RData`: Imagen de R con todas las variables cargadas para análisis posterior en R.
 * **`maps/`**:
-  * Contiene los mapas de verificación de localización de parcelas a escala de España, Europa y zona de estudio (ej. `location_location_map_es.png`).
+  * Contiene los mapas de verificación de localización de parcelas a escala de la zona de estudio (ej. `location_location_map_es.png`).
 * **`climodiagrams/`**:
   * **`historical/`**: Ficheros PNG con los diagramas climáticos Walter-Lieth del histórico de cada parcela.
-  * **`future/`**: Diagramas clasificados por escenarios SSP y décadas proyectadas (ej. `df_Cordoba_fut_ssp_2_period_2021-2040_climodiagram_walter_lieth_es.png`).
+  * **`future/`**: Diagramas clasificados por escenarios SSP y décadas proyectadas (ej. `df_plot_1_fut_ssp_2_period_2021-2040_climodiagram_walter_lieth_es.png`).
 
 ---
 
@@ -160,6 +246,8 @@ Rscript scripts/wc_main.r --case "mi_proyecto" --data "/media/usuario/DISCO" --h
 
 ---
 
+
+
 ## 📂 Configuración de Capas Geodésicas
 
 Para comprender la estructura, codificación de nombres y links de descarga directa de los archivos `.tif` de precipitaciones, temperaturas y modelos CMIP6 de la Tierra, consulte el documento:
@@ -169,8 +257,9 @@ Para comprender la estructura, codificación de nombres y links de descarga dire
 
 ## 🤝 Citas y Referencias
 
-Cuando publique trabajos científicos que utilicen datos procesados por esta herramienta, por favor cite los siguientes trabajos de referencia:
+Cuando publique trabajos científicos que utilicen datos procesados por esta herramienta, por favor cite tanto el repositorio como los trabajos de referencia correspondientes:
 
+* **WorldClimExtractR (este repositorio)**: Vázquez-Veloso, A. (2026). WorldClimExtractR: A parameterized R tool for historical and future CMIP6 WorldClim climate data extraction. GitHub repository: https://github.com/aitorvv/WorldClimExtractR
 * **WorldClim 2.1 Baseline**: Fick, S.E. and R.J. Hijmans, 2017. WorldClim 2: new 1km spatial resolution climate surfaces for global land areas. *International Journal of Climatology* 37 (12): 4302-4315.
 * **Monthly Weather Data**: Harris, I., Osborn, T.J., Jones, P.D., Lister, D.H. 2020. Version 4 of the CRU TS monthly high-resolution gridded multivariate climate dataset. *Scientific Data* 7: 109.
 * **Proyecciones Futuras (CMIP6)**: Petrie, R., et al. 2021. Coordinating an operational data distribution network for CMIP6 data. *Geoscientific Model Development*, 14(1), 629-644.

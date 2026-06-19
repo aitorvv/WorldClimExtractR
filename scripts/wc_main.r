@@ -106,6 +106,19 @@ if (!file.exists(input_file)) {
 # Load plot coordinates dataset
 df <- read.csv(input_file, sep = ",")
 
+# Check and set default historical years if missing or NA
+if (!"hst_start_year" %in% colnames(df)) {
+  df$hst_start_year <- 1990
+} else {
+  df$hst_start_year <- ifelse(is.na(df$hst_start_year), 1990, df$hst_start_year)
+}
+
+if (!"hst_end_year" %in% colnames(df)) {
+  df$hst_end_year <- 2020
+} else {
+  df$hst_end_year <- ifelse(is.na(df$hst_end_year), 2020, df$hst_end_year)
+}
+
 # Correct historical end year to prevent future year query errors
 df$hst_end_year <- ifelse(df$hst_end_year > 2021, 2021, df$hst_end_year)
 

@@ -6,12 +6,12 @@ This quick guide provides a checklist to confirm that the spatial data, location
 
 ## 1. Geographic Verification (Maps)
 
-Files in the `output/maps/` folder (e.g., `location_map_spain.png`, `location_map_europe.png`, etc.) allow you to visually check coordinate projection and alignment.
+Files in the `output/maps/` folder (e.g., `location_map_en.png`) allow you to visually check coordinate projection and alignment.
 
-### Checklist:
-- [ ] **Geographic Alignment**: Verify that the red points match the expected physical locations (e.g., a point in Córdoba should appear in southern Spain).
-- [ ] **Inverted Coordinates Check**: If the points appear in the ocean, on other continents, or outside logical boundaries, verify that the `latitude` and `longitude` columns were not swapped in the input `wc_plots.csv` file.
-- [ ] **Scale/Zoom Level Errors**: The `study_area` map should automatically adjust with a tolerance margin (0.5 degrees) around your points. If not, check for coordinate typos or extreme outliers in the input CSV.
+### 📜 Checklist:
+- **Geographic Alignment**: Verify that the red points match the expected physical locations (e.g., a point in Córdoba should appear in southern Spain).
+- **Inverted Coordinates Check**: If the points appear in the ocean, on other continents, or outside logical boundaries, verify that the `latitude` and `longitude` columns were not swapped in the input `wc_plots.csv` file.
+- **Scale/Zoom Level Errors**: The location map automatically adjusts dynamically with a margin proportional to the coordinate range of your points (with a minimum buffer of 0.2 degrees). If not, check for coordinate typos or extreme outliers in the input CSV.
 
 ---
 
@@ -19,21 +19,21 @@ Files in the `output/maps/` folder (e.g., `location_map_spain.png`, `location_ma
 
 Climate diagrams in the `output/climodiagrams/` folder represent monthly climate variables, combining precipitation and temperature.
 
-### Checklist:
-- [ ] **Scale Proportion (1:2)**: The left axis (Temperature in °C) and the right axis (Precipitation in mm) must follow a strict 1:2 ratio. For example, the `20°C` tick mark on the left must align horizontally with the `40 mm` tick mark on the right.
-- [ ] **Seasonality Shading**:
+### 📜 Checklist:
+- **Scale Proportion (1:2)**: The left axis (Temperature in °C) and the right axis (Precipitation in mm) must follow a strict 1:2 ratio. For example, the `20°C` tick mark on the left must align horizontally with the `40 mm` tick mark on the right.
+- **Seasonality Shading**:
   - **Dry periods** (where the orange temperature line lies above the blue precipitation bar, i.e., $P \le 2T$) must be shaded in **yellow**.
   - **Wet periods** (where precipitation exceeds twice the temperature, i.e., $P > 2T$) must be shaded in **light blue**.
-- [ ] **Subtitle Data Consistency**:
+- **Subtitle Data Consistency**:
   - The accumulated annual precipitation and annual mean temperature indicated in the chart subtitle must exactly match the values tabulated in `df_historical_year.csv` or `df_period_fut.csv` for that plot and period.
-- [ ] **Language**: Ensure that the month names on the X-axis and legend labels correspond to the selected language (`en` for English, `es` for Spanish).
+- **Language**: Ensure that the month names on the X-axis and legend labels correspond to the selected language (`en` for English, `es` for Spanish).
 
 ---
 
 ## 3. Tables and Consolidated Workbook Verification
 
-### Checklist:
-- [ ] **Consolidated Excel Workbook (`wc_output_data.xlsx`)**:
+### 📜 Checklist:
+- **Consolidated Excel Workbook (`wc_output_data.xlsx`)**:
   - It must contain separate tabs for historical monthly, annual, and period summaries, as well as future projections if they were run.
   - Verify that it does not contain cells with errors like `#N/A` or unexpected blank cells.
-- [ ] **ID Consistency**: The plot identifiers (`id`) in the file names of climate diagrams and table rows must exactly match the `id` column in the initial coordinates file.
+- **ID Consistency**: The plot identifiers (`id`) in the file names of climate diagrams and table rows must exactly match the `id` column in the initial coordinates file.

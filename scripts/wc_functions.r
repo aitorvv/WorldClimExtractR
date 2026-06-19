@@ -533,12 +533,14 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
     }
 
     for (file in files_list) {
-      file_var <- substring(file, first = 11, last = 14)  # bioc, prec, tmax, tmin from file name
+      parts <- strsplit(file, "_")[[1]]
+      file_var <- parts[3]  # bioc, prec, tmax, tmin from file name
       if (!file_var %in% var) {
         next
       }
       
-      file_ssp <- substring(file, first = 26, last = 26)  # SSP from file name
+      ssp_string <- parts[5]
+      file_ssp <- substr(ssp_string, 4, 4)  # SSP from file name (e.g., '2' from 'ssp245')
       if (!file_ssp %in% ssp) {
         next
       }
@@ -549,7 +551,7 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
         n_bands <- 12
       }
       
-      period <- substring(file, first = 30, last = 38)  # period from file name
+      period <- sub("\\.tif$", "", parts[6])  # period from file name
       
       for (band in 1:n_bands) {
         raster_file <- raster::raster(file.path(folder_path, file), band = band)
