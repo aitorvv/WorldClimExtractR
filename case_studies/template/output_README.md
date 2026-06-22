@@ -10,7 +10,7 @@
 This directory will contain the generated climate data extraction results after running the tool on a case study. Below is the structure and a brief explanation of the files generated.
 
 For a detailed explanation of variables and columns, please refer to:
-* [SALIDAS_GENERADAS.md](../../documentation/SALIDAS_GENERADAS.md) (Spanish)
+* [GENERATED_OUTPUTS_es.md](../../documentation/GENERATED_OUTPUTS_es.md) (Spanish)
 * [GENERATED_OUTPUTS.md](../../documentation/GENERATED_OUTPUTS.md) (English)
 
 ### Output structure
@@ -41,7 +41,7 @@ output/
 Este directorio contendrá los resultados generados tras la extracción de datos climáticos al ejecutar la herramienta en un caso de estudio. A continuación se detalla la estructura y una breve explicación de los archivos generados.
 
 Para obtener una explicación detallada de las variables y columnas, consulte:
-* [SALIDAS_GENERADAS.md](../../documentation/SALIDAS_GENERADAS.md) (español)
+* [GENERATED_OUTPUTS_es.md](../../documentation/GENERATED_OUTPUTS_es.md) (español)
 * [GENERATED_OUTPUTS.md](../../documentation/GENERATED_OUTPUTS.md) (inglés)
 
 ### Estructura de salidas

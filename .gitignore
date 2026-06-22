@@ -12,9 +12,10 @@
 !/climate_data/future_climate_data/.gitkeep
 
 # Case studies
-# Ignore all case studies except the clean template
+# Ignore all case studies except the clean template and main documentation
 case_studies/*
 !case_studies/template/
+!case_studies/README.md
 
 # R environment and history files
 .Rhistory
