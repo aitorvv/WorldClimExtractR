@@ -29,31 +29,44 @@ Here is an illustrative example using 6 coordinate plots located worldwide, show
 
 Below is a preview of the structured tabular datasets automatically produced in `CSV` and `XLSX` (consolidated spreadsheet) formats:
 
-### A. Monthly historical data (`historical_monthly_weather_data.csv`)
-First few rows showing the extracted monthly climate variables (e.g., precipitation, temperature extremes, and average):
+### A. Historical baseline climate data (`historical_climate_data.csv`)
+Long-term baseline variables (e.g., bioclimatic indices or elevation) extracted for the standard 1970-2000 reference period:
 
-| id | latitude | longitude | elev | year | month | prec | tmax | tmin | tavg |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 01 | 48.5 | 8.0 | -3.0 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 02 | 56.3 | 7.0 | -2.0 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 03 | 96.7 | 12.0 | 0.0 | 6.0 |
+| id | latitude | longitude | period | bio_3 |
+| :--- | :---: | :---: | :---: | :---: |
+| plot_1 | 37.903222 | -2.911167 | 1970-2000 | 37.8 |
+| plot_2 | 35.597500 | -82.555400 | 1970-2000 | 40.2 |
 
-### B. Historical weather period summary (`historical_period_weather_data.csv`)
-Aggregated weather values and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
+> [!NOTE]
+> Columns vary dynamically depending on the selected historical baseline variable parameter (`--hst_var`).
+
+### B. Monthly historical weather data (`historical_monthly_weather_data.csv`)
+First few rows showing the extracted monthly weather observations (precipitation, temperature extremes, and average) from CRU-TS:
+
+| id | latitude | longitude | year | month | prec | tmax | tmin | tavg |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | 48.5 | 8 | -3 | 2.5 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | 56.3 | 7 | -2 | 2.5 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 96.7 | 12 | 0 | 6.0 |
+
+### C. Historical weather period summary (`historical_period_weather_data.csv`)
+Aggregated weather averages and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | 2015_2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
 | plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
-| plot_2 | 2015_2021 | annual | 8.2 | 20.8 | 14.5 | 1392.9 | 56.81 |
 
-### C. Future climate period projections (`future_period_climatic_data.csv`)
+> [!NOTE]
+> The period summary table includes additional min/max range columns (`tmin_min`, `tmax_max`, etc.) to provide temporal variation limits.
+
+### D. Future climate period projections (`future_period_climatic_data.csv`)
 CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/period and SSP scenario:
 
-| id | model | file_ssp | period | tmin | tmax | tavg | prec | martonne |
+| id | model | ssp | period | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | MIROC6 | 1 | 2021-2040 | 7.1 | 20.0 | 13.6 | 495.0 | 21.02 |
-| plot_1 | MIROC6 | 1 | 2041-2060 | 7.5 | 20.5 | 14.0 | 490.0 | 20.40 |
 | plot_1 | MIROC6 | 2 | 2021-2040 | 7.1 | 19.8 | 13.5 | 502.0 | 21.39 |
+| plot_1 | MIROC6 | 2 | 2041-2060 | 7.7 | 20.8 | 14.2 | 484.0 | 19.96 |
 
 > [!NOTE]
 > Future climate tables include additional min/max bounds columns (`tmin_min`, `tmax_max`, etc.) to provide uncertainty ranges for each projection period.

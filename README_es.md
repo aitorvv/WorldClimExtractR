@@ -29,31 +29,44 @@ A continuación se muestra un ejemplo ilustrativo con 6 parcelas de prueba distr
 
 A continuación se expone una muestra de la estructura de las tablas de salida que la herramienta genera automáticamente en formatos `CSV` y `XLSX` (libro Excel unificado):
 
-### A. Datos históricos mensuales (`historical_monthly_weather_data.csv`)
-Primeras filas con las variables climáticas mensuales extraídas (precipitación, temperaturas extremas y medias):
+### A. Datos de clima base histórico (`historical_climate_data.csv`)
+Variables de clima base de referencia a largo plazo (ej. índices bioclimáticos o elevación) extraídas para el periodo de referencia estándar 1970-2000:
 
-| id | latitude | longitude | elev | year | month | prec | tmax | tmin | tavg |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 01 | 48.5 | 8.0 | -3.0 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 02 | 56.3 | 7.0 | -2.0 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 03 | 96.7 | 12.0 | 0.0 | 6.0 |
+| id | latitude | longitude | period | bio_3 |
+| :--- | :---: | :---: | :---: | :---: |
+| plot_1 | 37.903222 | -2.911167 | 1970-2000 | 37.8 |
+| plot_2 | 35.597500 | -82.555400 | 1970-2000 | 40.2 |
 
-### B. Resumen meteorológico del periodo histórico (`historical_period_weather_data.csv`)
-Valores meteorológicos consolidados por periodo e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
+> [!NOTE]
+> Las columnas varían dinámicamente según el parámetro de variable de clima base histórico seleccionado (`--hst_var`).
+
+### B. Datos meteorológicos mensuales históricos (`historical_monthly_weather_data.csv`)
+Primeras filas con las observaciones meteorológicas mensuales extraídas (precipitación, temperaturas extremas y medias) desde CRU-TS:
+
+| id | latitude | longitude | year | month | prec | tmax | tmin | tavg |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | 48.5 | 8 | -3 | 2.5 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | 56.3 | 7 | -2 | 2.5 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 96.7 | 12 | 0 | 6.0 |
+
+### C. Resumen meteorológico del periodo histórico (`historical_period_weather_data.csv`)
+Valores meteorológicos consolidados e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| plot_1 | 2015_2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
 | plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
-| plot_2 | 2015_2021 | annual | 8.2 | 20.8 | 14.5 | 1392.9 | 56.81 |
 
-### C. Proyecciones climáticas de futuro (`future_period_climatic_data.csv`)
+> [!NOTE]
+> La tabla de resumen del periodo contiene columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los límites de variación temporal.
+
+### D. Proyecciones climáticas de futuro (`future_period_climatic_data.csv`)
 Promedios proyectados bajo modelos CMIP6 y rangos (mínimo/máximo) agrupados por periodo/década y escenario SSP:
 
-| id | model | file_ssp | period | tmin | tmax | tavg | prec | martonne |
+| id | model | ssp | period | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | MIROC6 | 1 | 2021-2040 | 7.1 | 20.0 | 13.6 | 495.0 | 21.02 |
-| plot_1 | MIROC6 | 1 | 2041-2060 | 7.5 | 20.5 | 14.0 | 490.0 | 20.40 |
 | plot_1 | MIROC6 | 2 | 2021-2040 | 7.1 | 19.8 | 13.5 | 502.0 | 21.39 |
+| plot_1 | MIROC6 | 2 | 2041-2060 | 7.7 | 20.8 | 14.2 | 484.0 | 19.96 |
 
 > [!NOTE]
 > Las tablas de proyecciones futuras contienen columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los márgenes de incertidumbre de cada periodo proyectado.
