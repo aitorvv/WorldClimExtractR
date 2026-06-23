@@ -18,13 +18,14 @@ For a detailed explanation of variables and columns, please refer to:
 ```text
 output/
 ├── data/
-│   ├── historical_monthly_weather_data.csv  - Historical monthly T, P, Martonne
-│   ├── historical_year_climatic_data.csv    - Historical annual T, P, Martonne
-│   ├── historical_period_climatic_data.csv  - Historical bioclimatic variables (bio1-bio19)
+│   ├── historical_climate_data.csv          - Long-term baseline climate variables (1970-2000)
+│   ├── historical_monthly_weather_data.csv  - Historical monthly weather observations
+│   ├── historical_year_weather_data.csv     - Consolidated annual weather summaries
+│   ├── historical_period_weather_data.csv   - Average weather parameters for the period
 │   ├── future_climate_data.csv              - CMIP6 future climate projections
-│   ├── future_period_climatic_data.csv      - Future period monthly averages
+│   ├── future_period_climatic_data.csv      - Projected period monthly averages
 │   ├── all_output_data.xlsx                 - Consolidated Excel workbook
-│   ├── plots_extracted.geojson              - Spatial WGS84 point layer with climate attributes
+│   ├── plots_extracted.geojson              - Spatial WGS84 point layer (only coordinates and ID)
 │   ├── citations_and_metadata.md            - Auto-generated scientific citations and metadata
 │   └── environment.rdata                    - Saved R workspace image
 ├── maps/
@@ -49,13 +50,14 @@ Para obtener una explicación detallada de las variables y columnas, consulte:
 ```text
 output/
 ├── data/
+│   ├── historical_climate_data.csv          - Variables climáticas base a largo plazo (1970-2000)
 │   ├── historical_monthly_weather_data.csv  - Datos meteorológicos mensuales históricos (T, P, Martonne)
-│   ├── historical_year_climatic_data.csv    - Resúmenes climáticos anuales históricos (T, P, Martonne)
-│   ├── historical_period_climatic_data.csv  - Variables bioclimáticas del periodo histórico (bio1-bio19)
+│   ├── historical_year_weather_data.csv     - Resúmenes climáticos anuales históricos (T, P, Martonne)
+│   ├── historical_period_weather_data.csv   - Promedios climáticos históricos de periodo
 │   ├── future_climate_data.csv              - Proyecciones climáticas futuras de CMIP6
 │   ├── future_period_climatic_data.csv      - Medias mensuales de periodos futuros
 │   ├── all_output_data.xlsx                 - Libro de Excel consolidado
-│   ├── plots_extracted.geojson              - Capa espacial de puntos WGS84 con atributos climáticos
+│   ├── plots_extracted.geojson              - Capa espacial de puntos WGS84 (solo identificador y coordenadas)
 │   ├── citations_and_metadata.md            - Referencias científicas y metadatos autogenerados
 │   └── environment.rdata                    - Imagen guardada del espacio de trabajo de R
 ├── maps/

@@ -40,13 +40,14 @@ When the execution completes, the tool creates an `output/` directory inside you
 ```text
 output/
 ├── data/
+│   ├── historical_climate_data.csv          - Long-term baseline climate variables (1970-2000)
 │   ├── historical_monthly_weather_data.csv  - Historical monthly weather observations
-│   ├── historical_year_climatic_data.csv    - Consolidated annual summaries
-│   ├── historical_period_climatic_data.csv  - Average historical bioclimatic variables
+│   ├── historical_year_weather_data.csv     - Consolidated annual weather summaries
+│   ├── historical_period_weather_data.csv   - Average weather parameters for the period
 │   ├── future_climate_data.csv              - Future CMIP6 climate projections
 │   ├── future_period_climatic_data.csv      - Projected period monthly averages
 │   ├── all_output_data.xlsx                 - Consolidated Excel workbook
-│   ├── plots_extracted.geojson              - Spatial WGS84 point layer with climate attributes
+│   ├── plots_extracted.geojson              - Spatial WGS84 point layer (only coordinates and ID)
 │   ├── citations_and_metadata.md            - Auto-generated citations and run metadata
 │   └── environment.rdata                    - Saved R session environment
 ├── maps/
@@ -98,13 +99,14 @@ Tras completar la ejecución, la herramienta crea un directorio `output/` dentro
 ```text
 output/
 ├── data/
+│   ├── historical_climate_data.csv          - Variables climáticas base a largo plazo (1970-2000)
 │   ├── historical_monthly_weather_data.csv  - Observaciones meteorológicas mensuales históricas
-│   ├── historical_year_climatic_data.csv    - Resúmenes consolidados anuales
-│   ├── historical_period_climatic_data.csv  - Promedios históricos de variables bioclimáticas
+│   ├── historical_year_weather_data.csv     - Resúmenes consolidados anuales meteorológicos
+│   ├── historical_period_weather_data.csv   - Promedios meteorológicos históricos de periodo
 │   ├── future_climate_data.csv              - Proyecciones de cambio climático CMIP6
 │   ├── future_period_climatic_data.csv      - Medias mensuales por periodos futuros
 │   ├── all_output_data.xlsx                 - Libro Excel consolidado
-│   ├── plots_extracted.geojson              - Capa de puntos WGS84 con atributos climáticos
+│   ├── plots_extracted.geojson              - Capa de puntos WGS84 (solo identificador y coordenadas)
 │   ├── citations_and_metadata.md            - Referencias científicas y metadatos autogenerados
 │   └── environment.rdata                    - Entorno de sesión guardado para R
 ├── maps/

@@ -72,9 +72,14 @@ option_list <- list(
     help = "Generate and save Walter-Lieth climodiagram plots [default: %default]",
     metavar = "logical"
   ),
-  make_option(c("--historical"),
+  make_option(c("--hst_climate"),
     type = "logical", default = TRUE,
-    help = "Extract and process historical climate data [default: %default]",
+    help = "Extract and process historical baseline climate data [default: %default]",
+    metavar = "logical"
+  ),
+  make_option(c("--hst_weather"),
+    type = "logical", default = TRUE,
+    help = "Extract and process historical monthly weather data [default: %default]",
     metavar = "logical"
   ),
   make_option(c("--future"),
@@ -102,7 +107,8 @@ lang <- opt$lang
 
 run_map <- opt$map
 run_climodiagram <- opt$climodiagram
-run_historical <- opt$historical
+run_hst_climate <- opt$hst_climate
+run_hst_weather <- opt$hst_weather
 run_future <- opt$future
 verbose <- opt$verbose
 
@@ -161,8 +167,8 @@ cat("[INFO] Base directory: ", basedir, "\n", sep = "")
 cat("[INFO] Climate layers path: ", datadir, "\n", sep = "")
 cat("[INFO] Output language: ", lang, "\n", sep = "")
 cat(sprintf(
-  "[INFO] Active tasks: Map=%s | Historical=%s | Future=%s | Climodiagrams=%s\n",
-  run_map, run_historical, run_future, run_climodiagram
+  "[INFO] Active tasks: Map=%s | Historical Climate=%s | Historical Weather=%s | Future=%s | Climodiagrams=%s\n",
+  run_map, run_hst_climate, run_hst_weather, run_future, run_climodiagram
 ))
 cat("[INFO] Total plots to process: ", length(unique(df$id)), "\n", sep = "")
 cat("===========================================================\n\n")
@@ -192,12 +198,12 @@ if (run_map) {
 
 # Data extraction loop ====
 
-df_hst <- df_year <- df_period <- df_fut <- df_period_fut <- tibble::tibble()
+df_hst_climate <- df_hst_weather <- df_year <- df_period <- df_fut <- df_period_fut <- tibble::tibble()
 unique_plots <- unique(df$id)
 total_plots <- length(unique_plots)
 
-# Phase 2: Historical climate data extraction
-if (run_historical) {
+# Phase 2: Historical data extraction
+if (run_hst_climate || run_hst_weather) {
   cat("[2/5] Extracting and processing historical data...\n")
   current_idx <- 0
   for (plot_id_val in unique_plots) {
@@ -220,35 +226,40 @@ if (run_historical) {
     plot_row <- df[df$id == plot_id_val, ]
     tmp_spdf <- get_spdf(df = plot_row, long_col = "longitude", lat_col = "latitude", verbose = verbose_func)
 
-    # 1. extract historic baseline point data (e.g. elevation or bioclimatic baseline)
-    tmp_spdf_hst <- get_wc_historic_data(
-      spdf = tmp_spdf, plot_id = "id", var = target_hst_var,
-      bio_var = target_hst_bio_var, basedir = datadir, verbose = verbose_func
-    )
+    # 1. extract historic baseline climate point data (e.g. elevation or bioclimatic baseline)
+    if (run_hst_climate) {
+      tmp_spdf_hst_climate <- get_wc_historic_climate_data(
+        spdf = tmp_spdf, plot_id = "id", var = target_hst_var,
+        bio_var = target_hst_bio_var, basedir = datadir, verbose = verbose_func
+      )
+      df_hst_climate <- dplyr::bind_rows(df_hst_climate, tmp_spdf_hst_climate@data)
+    }
 
-    # 2. extract historical monthly data over the plot's specific time range
-    tmp_spdf_hst <- get_wc_historical_monthly_weather_data(
-      spdf = tmp_spdf_hst,
-      period = c(plot_row$hst_start_year:plot_row$hst_end_year),
-      basedir = datadir, verbose = verbose_func
-    )
-    df_hst <- dplyr::bind_rows(df_hst, tmp_spdf_hst@data)
+    # 2. extract historical monthly weather data over the plot's specific time range
+    if (run_hst_weather) {
+      tmp_spdf_hst_weather <- get_wc_historical_monthly_weather_data(
+        spdf = tmp_spdf,
+        period = c(plot_row$hst_start_year:plot_row$hst_end_year),
+        basedir = datadir, verbose = verbose_func
+      )
+      df_hst_weather <- dplyr::bind_rows(df_hst_weather, tmp_spdf_hst_weather@data)
 
-    # 3. summarize monthly data into yearly records
-    tmp_df_year <- get_wc_annual_data(df = tmp_spdf_hst@data, plot_id = "id", verbose = verbose_func)
-    df_year <- dplyr::bind_rows(df_year, tmp_df_year)
+      # 3. summarize monthly weather data into yearly records
+      tmp_df_year <- get_wc_annual_weather_data(df = tmp_spdf_hst_weather@data, plot_id = "id", verbose = verbose_func)
+      df_year <- dplyr::bind_rows(df_year, tmp_df_year)
 
-    # 4. summarize average monthly and annual variables over the whole study period
-    tmp_df_period_monthly <- get_wc_period_data(
-      df = tmp_spdf_hst@data, plot_id = "id", grouping_var = "month", year_col = "year",
-      start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func
-    )
-    tmp_df_period_yearly <- get_wc_period_data(
-      df = tmp_df_year, plot_id = "id", grouping_var = "year", year_col = "year",
-      start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func
-    )
-    tmp_df_period <- group_wc_period_data(tmp_df_period_monthly, tmp_df_period_yearly)
-    df_period <- dplyr::bind_rows(df_period, tmp_df_period)
+      # 4. summarize average monthly and annual variables over the whole study period
+      tmp_df_period_monthly <- get_wc_period_weather_data(
+        df = tmp_spdf_hst_weather@data, plot_id = "id", grouping_var = "month", year_col = "year",
+        start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func
+      )
+      tmp_df_period_yearly <- get_wc_period_weather_data(
+        df = tmp_df_year, plot_id = "id", grouping_var = "year", year_col = "year",
+        start_year = plot_row$hst_start_year, end_year = plot_row$hst_end_year, verbose = verbose_func
+      )
+      tmp_df_period <- group_wc_period_weather_data(tmp_df_period_monthly, tmp_df_period_yearly)
+      df_period <- dplyr::bind_rows(df_period, tmp_df_period)
+    }
 
     if (!verbose) {
       cat("OK\n")
@@ -256,7 +267,7 @@ if (run_historical) {
   }
   cat("      -> Historical data successfully completed.\n\n")
 } else {
-  cat("[2/5] Extracting and processing historical data... Skipped (flag disabled)\n\n")
+  cat("[2/5] Extracting and processing historical data... Skipped (flags disabled)\n\n")
 }
 
 # Phase 3: Future CMIP6 projections extraction
@@ -306,7 +317,7 @@ if (run_future) {
 
     # 7. summarize future point data into multi-year projection periods
     if (!is.null(tmp_df_for_period)) {
-      tmp_df_period_fut <- get_wc_period_data(
+      tmp_df_period_fut <- get_wc_period_weather_data(
         df = tmp_df_for_period, plot_id = "id", grouping_var = "period",
         period_col = "period", verbose = verbose_func
       )
@@ -327,7 +338,7 @@ if (run_climodiagram) {
   cat("[4/5] Generating Walter-Lieth climodiagrams...\n")
 
   # Historical climodiagrams
-  if (run_historical && nrow(df_hst) > 0) {
+  if (run_hst_weather && nrow(df_hst_weather) > 0) {
     current_idx <- 0
     for (plot_id_val in unique_plots) {
       current_idx <- current_idx + 1
@@ -341,7 +352,7 @@ if (run_climodiagram) {
       }
 
       plot_row <- df[df$id == plot_id_val, ]
-      plot_hst_data <- df_hst[df_hst$id == plot_id_val, ]
+      plot_hst_data <- df_hst_weather[df_hst_weather$id == plot_id_val, ]
 
       folder_hst <- file.path(output_path, "climodiagrams", "historical")
       dir.create(folder_hst, recursive = TRUE, showWarnings = FALSE)
@@ -413,8 +424,8 @@ if (run_climodiagram) {
 
 # clean global environment of intermediate workspace objects
 rm(list = setdiff(ls(envir = .GlobalEnv), c(
-  "df", "df_hst", "df_year", "df_period", "df_fut", "df_period_fut",
-  "output_path", "run_historical", "run_future", "run_map",
+  "df", "df_hst_climate", "df_hst_weather", "df_year", "df_period", "df_fut", "df_period_fut",
+  "output_path", "run_hst_climate", "run_hst_weather", "run_future", "run_map",
   "run_climodiagram", "lang", "case_study_name", "verbose", "opt", "datadir"
 )), envir = .GlobalEnv)
 
@@ -428,16 +439,19 @@ folder_data <- file.path(output_path, "data")
 dir.create(folder_data, recursive = TRUE, showWarnings = FALSE)
 
 # Clean up stale outputs if they are disabled in the current run
-if (!run_historical) {
+if (!run_hst_climate) {
+  unlink(file.path(folder_data, "historical_climate_data.csv"))
+}
+if (!run_hst_weather) {
   unlink(file.path(folder_data, "historical_monthly_weather_data.csv"))
-  unlink(file.path(folder_data, "historical_year_climatic_data.csv"))
-  unlink(file.path(folder_data, "historical_period_climatic_data.csv"))
+  unlink(file.path(folder_data, "historical_year_weather_data.csv"))
+  unlink(file.path(folder_data, "historical_period_weather_data.csv"))
 }
 if (!run_future) {
   unlink(file.path(folder_data, "future_climate_data.csv"))
   unlink(file.path(folder_data, "future_period_climatic_data.csv"))
 }
-if (!run_historical && !run_future) {
+if (!run_hst_climate && !run_hst_weather && !run_future) {
   unlink(file.path(folder_data, "plots_extracted.geojson"))
 }
 if (!run_map) {
@@ -504,24 +518,34 @@ clean_and_round_df <- function(df, is_period_or_year = FALSE) {
 # Export individual CSV outputs and Excel worksheets conditionally
 wb <- openxlsx::createWorkbook()
 
-if (run_historical) {
-  if (nrow(df_hst) > 0) {
-    df_hst <- clean_and_round_df(df_hst, is_period_or_year = FALSE)
+if (run_hst_climate) {
+  if (nrow(df_hst_climate) > 0) {
+    df_hst_climate <- clean_and_round_df(df_hst_climate, is_period_or_year = FALSE)
+    write.csv(df_hst_climate, file = file.path(folder_data, "historical_climate_data.csv"), row.names = FALSE)
+    openxlsx::addWorksheet(wb, "historical_climate_data")
+    openxlsx::writeData(wb, "historical_climate_data", df_hst_climate)
+    cat("      -> Historical baseline climate CSV successfully created.\n")
+  }
+}
+
+if (run_hst_weather) {
+  if (nrow(df_hst_weather) > 0) {
+    df_hst_weather <- clean_and_round_df(df_hst_weather, is_period_or_year = FALSE)
     df_year <- clean_and_round_df(df_year, is_period_or_year = TRUE)
     df_period <- clean_and_round_df(df_period, is_period_or_year = TRUE)
 
-    write.csv(df_hst, file = file.path(folder_data, "historical_monthly_weather_data.csv"), row.names = FALSE)
-    write.csv(df_year, file = file.path(folder_data, "historical_year_climatic_data.csv"), row.names = FALSE)
-    write.csv(df_period, file = file.path(folder_data, "historical_period_climatic_data.csv"), row.names = FALSE)
+    write.csv(df_hst_weather, file = file.path(folder_data, "historical_monthly_weather_data.csv"), row.names = FALSE)
+    write.csv(df_year, file = file.path(folder_data, "historical_year_weather_data.csv"), row.names = FALSE)
+    write.csv(df_period, file = file.path(folder_data, "historical_period_weather_data.csv"), row.names = FALSE)
 
     openxlsx::addWorksheet(wb, "historical_monthly_weather_data")
-    openxlsx::writeData(wb, "historical_monthly_weather_data", df_hst)
-    openxlsx::addWorksheet(wb, "historical_year_climatic_data")
-    openxlsx::writeData(wb, "historical_year_climatic_data", df_year)
-    openxlsx::addWorksheet(wb, "historical_period_climatic_data")
-    openxlsx::writeData(wb, "historical_period_climatic_data", df_period)
+    openxlsx::writeData(wb, "historical_monthly_weather_data", df_hst_weather)
+    openxlsx::addWorksheet(wb, "historical_year_weather_data")
+    openxlsx::writeData(wb, "historical_year_weather_data", df_year)
+    openxlsx::addWorksheet(wb, "historical_period_weather_data")
+    openxlsx::writeData(wb, "historical_period_weather_data", df_period)
 
-    cat("      -> Historical CSV files successfully created.\n")
+    cat("      -> Historical weather CSV files successfully created.\n")
   }
 }
 
@@ -548,17 +572,8 @@ if (length(names(wb)) > 0) {
 }
 
 # Export GeoJSON spatial data
-if (nrow(df_period) > 0) {
-  df_geo <- dplyr::left_join(df, df_period, by = "id", suffix = c("", ".period"))
-  df_geo_sf <- sf::st_as_sf(df_geo, coords = c("longitude", "latitude"), crs = 4326)
-  suppressMessages(
-    sf::st_write(df_geo_sf, file.path(folder_data, "plots_extracted.geojson"),
-      driver = "GeoJSON", delete_dsn = TRUE, quiet = TRUE
-    )
-  )
-  cat("      -> GeoJSON spatial layer saved in: data/plots_extracted.geojson\n")
-} else if (nrow(df_period_fut) > 0) {
-  df_geo <- dplyr::left_join(df, df_period_fut, by = "id", suffix = c("", ".period"))
+if (nrow(df) > 0) {
+  df_geo <- df[, c("id", "longitude", "latitude")]
   df_geo_sf <- sf::st_as_sf(df_geo, coords = c("longitude", "latitude"), crs = 4326)
   suppressMessages(
     sf::st_write(df_geo_sf, file.path(folder_data, "plots_extracted.geojson"),
@@ -574,7 +589,8 @@ metadata_content <- paste0(
   "# WorldClimExtractR - Execution Metadata\n\n",
   "**Execution Date:** ", format(Sys.time(), "%Y-%m-%d %H:%M:%S"), "\n",
   "**Number of Plots Processed:** ", nrow(df), "\n",
-  "**Historical Extraction Status:** ", ifelse(run_historical, "Enabled", "Disabled"), "\n",
+  "**Historical Climate Status:** ", ifelse(run_hst_climate, "Enabled", "Disabled"), "\n",
+  "**Historical Weather Status:** ", ifelse(run_hst_weather, "Enabled", "Disabled"), "\n",
   "**Future Extraction Status:** ", ifelse(run_future, "Enabled", "Disabled"), "\n",
   "**Map Generation Status:** ", ifelse(run_map, "Enabled", "Disabled"), "\n",
   "**Climodiagram Generation Status:** ", ifelse(run_climodiagram, "Enabled", "Disabled"), "\n\n",
@@ -590,7 +606,8 @@ metadata_content <- paste0(
   "- Future Model: ", opt$model, "\n",
   "- Map: ", opt$map, "\n",
   "- Climodiagram: ", opt$climodiagram, "\n",
-  "- Historical: ", opt$historical, "\n",
+  "- Historical Climate: ", opt$hst_climate, "\n",
+  "- Historical Weather: ", opt$hst_weather, "\n",
   "- Future: ", opt$future, "\n",
   "- Verbose: ", opt$verbose, "\n\n",
   "## Bibliography & Citations\n\n",

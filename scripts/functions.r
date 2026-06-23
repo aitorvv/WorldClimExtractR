@@ -84,9 +84,9 @@ get_spdf <- function(df, long_col = "longitude", lat_col = "latitude",
 #' @param verbose Logical to print the citation of the data (default TRUE).
 #' @return SpatialPointsDataFrame with the extracted data.
 #' @examples
-#' spdf_hst <- get_wc_historic_data(spdf, var = 'bio', bio_var = 3)
+#' spdf_hst <- get_wc_historic_climate_data(spdf, var = 'bio', bio_var = 3)
 #' @export
-get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3, basedir = getwd(), verbose = TRUE) {
+get_wc_historic_climate_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3, basedir = getwd(), verbose = TRUE) {
   if (verbose) {
     cat(paste("Extracting WorldClim historic ", var, " data for plot ", spdf@data[[plot_id]], "...\n", sep = ""))
   }
@@ -94,7 +94,10 @@ get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3,
   wc_base_path <- file.path(basedir, "historical_climate_data")
   period <- "1970-2000"  # study baseline period
   
-  if (var == "bio" && !is.null(bio_var)) {
+  if (var == "bio") {
+    if (is.null(bio_var)) {
+      stop("ERROR: You must specify a bio variable number (1-19) using the -v argument when extracting 'bio'.")
+    }
     file <- file.path(wc_base_path, "wc2.1_30s_bio", paste0("wc2.1_30s_bio_", bio_var, ".tif"))
     files_list <- file
   } else if (var == "elev") {
@@ -104,6 +107,15 @@ get_wc_historic_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3,
     folder <- file.path(wc_base_path, paste0("wc2.1_30s_", var))
     files <- list.files(path = folder, pattern = "\\.tif$")
     files_list <- file.path(folder, files)
+  }
+  
+  # ensure that files exist to prevent dplyr errors later
+  if (length(files_list) == 0) {
+    stop(paste0("ERROR: No .tif files found for the variable '", var, "'."))
+  }
+  
+  if (!all(file.exists(files_list))) {
+    stop(paste0("ERROR: One or more expected .tif files for the variable '", var, "' do not exist."))
   }
   
   new_df <- tibble::tibble()
@@ -208,10 +220,19 @@ get_wc_historical_monthly_weather_data <- function(spdf, period = c(1951:2021), 
     }
   }
   
-  new_spdf@data$tavg <- (new_spdf@data$tmax + new_spdf@data$tmin) / 2
+  if (all(c("tmax", "tmin") %in% colnames(new_spdf@data))) {
+    new_spdf@data$tavg <- (new_spdf@data$tmax + new_spdf@data$tmin) / 2
+    if (verbose) {
+      cat("Average temperature calculated!\n")
+    }
+  } else {
+    new_spdf@data$tavg <- NA
+    if (verbose) {
+      cat("Warning: 'tmax' or 'tmin' not found. Average temperature set to NA.\n")
+    }
+  }
   
   if (verbose) {
-    cat("Average temperature calculated!\n")
     cat("All data was estimated successfully!\n")
     cat("\n")
   }
@@ -239,9 +260,9 @@ get_wc_historical_monthly_weather_data <- function(spdf, period = c(1951:2021), 
 #' @param verbose Logical to print the citation of the data (default TRUE).
 #' @return Data frame with annual average statistics.
 #' @examples
-#' df_annual <- get_wc_annual_data(df_hst)
+#' df_annual <- get_wc_annual_weather_data(df_hst)
 #' @export
-get_wc_annual_data <- function(df, plot_id = 'ID', year_col = 'year', verbose = TRUE) {
+get_wc_annual_weather_data <- function(df, plot_id = 'ID', year_col = 'year', verbose = TRUE) {
   avg_year <- df %>%
     dplyr::group_by(dplyr::across(dplyr::all_of(c(plot_id, year_col)))) %>%
     dplyr::summarise(
@@ -292,9 +313,9 @@ get_wc_annual_data <- function(df, plot_id = 'ID', year_col = 'year', verbose = 
 #' @param verbose Logical to print the citation of the data (default TRUE).
 #' @return Data frame containing period summary statistics.
 #' @examples
-#' df_period <- get_wc_period_data(df_annual, grouping_var = 'year', start_year = 1990, end_year = 2020)
+#' df_period <- get_wc_period_weather_data(df_annual, grouping_var = 'year', start_year = 1990, end_year = 2020)
 #' @export
-get_wc_period_data <- function(df, plot_id = 'ID', grouping_var = 'year', period_col = 'period', ssps_col = 'file_ssp',
+get_wc_period_weather_data <- function(df, plot_id = 'ID', grouping_var = 'year', period_col = 'period', ssps_col = 'file_ssp',
                                model_col = 'model', year_col = 'year', month_col = 'month', 
                                start_year = '', end_year = '', verbose = TRUE) {
   
@@ -395,9 +416,9 @@ get_wc_period_data <- function(df, plot_id = 'ID', grouping_var = 'year', period
 #' @param df_period_yearly Data frame containing yearly summarized data.
 #' @return Data frame containing combined and structured period data.
 #' @examples
-#' df_period <- group_wc_period_data(df_period_monthly, df_period_yearly)
+#' df_period <- group_wc_period_weather_data(df_period_monthly, df_period_yearly)
 #' @export
-group_wc_period_data <- function(df_period_monthly, df_period_yearly) {
+group_wc_period_weather_data <- function(df_period_monthly, df_period_yearly) {
   df_period <- rbind(df_period_monthly, df_period_yearly)
   df_period <- dplyr::select(df_period, id, period, month, tmin_min, tavg_min, tmax_min, prec_min, 
                              tmin, tmax, tavg, prec, tmin_max, tavg_max, tmax_max, prec_max, martonne)
@@ -865,13 +886,13 @@ get_location_plot <- function(df, long_col = 'longitude', lat_col = 'latitude', 
   df_sf <- sf::st_as_sf(df, coords = c("longitude", "latitude"), crs = 4326, remove = FALSE)
   
   # load national boundary shapes via giscoR
-  shp_countries <- suppressMessages(
+  shp_countries <- suppressWarnings(suppressMessages(
     giscoR::gisco_get_countries(
       resolution = "10",
       year = "2020",
       epsg = "4326"
     )
-  )
+  ))
   
   # identify which countries contain the plots
   intersected <- suppressWarnings(suppressMessages(sf::st_join(df_sf, shp_countries)))
@@ -905,14 +926,14 @@ get_location_plot <- function(df, long_col = 'longitude', lat_col = 'latitude', 
   
   if (use_nuts) {
     # points are in Europe, download NUTS shapes
-    shp_regions <- suppressMessages(
+    shp_regions <- suppressWarnings(suppressMessages(
       giscoR::gisco_get_nuts(
         resolution = "10",
         nuts_level = nuts_level, 
         year = "2021",
         epsg = "4326"
       )
-    )
+    ))
     # filter to countries where plots are located
     shp_regions <- shp_regions[shp_regions$CNTR_CODE %in% countries_in_df, ]
     

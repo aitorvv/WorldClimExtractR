@@ -11,9 +11,10 @@ Al completarse el proceso con éxito, la carpeta `output/` tendrá la siguiente 
 ```text
 output/
 ├── data/
+│   ├── historical_climate_data.csv
 │   ├── historical_monthly_weather_data.csv
-│   ├── historical_year_climatic_data.csv
-│   ├── historical_period_climatic_data.csv
+│   ├── historical_year_weather_data.csv
+│   ├── historical_period_weather_data.csv
 │   ├── future_climate_data.csv
 │   ├── future_period_climatic_data.csv
 │   ├── all_output_data.xlsx
@@ -34,29 +35,53 @@ output/
 
 ## 1. Carpeta `data/` (datos estructurados)
 
-### `historical_monthly_weather_data.csv` (datos históricos mensuales)
-Contiene la serie temporal de datos climáticos mensuales para cada parcela en su periodo temporal configurado (hasta el año 2021).
+### `historical_climate_data.csv` (datos de clima base histórico de referencia)
+Contiene los datos climáticos de referencia histórica a largo plazo (clima estándar de WorldClim 2.1 para el periodo 1970-2000) extraídos para cada parcela. Dependiendo de la opción `--hst_var` especificada, este fichero contendrá diferentes tipos de datos:
+
+* **Variables Estáticas o Anualizadas (`elev`, `bio`):**
+  * `id`: Identificador único de la parcela.
+  * `latitude`, `longitude`: Coordenadas geográficas en WGS84 (redondeadas a 6 decimales).
+  * `period`: Periodo de referencia (`1970-2000`).
+  * `elevation`: Elevación en metros sobre el nivel del mar (si se procesa `--hst_var elev`, derivado de datos SRTM).
+  * `bio_[1-19]`: Variable bioclimática seleccionada (si se procesa `--hst_var bio`, especificada mediante `--hst_bio`). Por ejemplo, `bio_3` representa la Isotermia.
+
+* **Variables Climáticas Mensuales (`tmin`, `tmax`, `tavg`, `prec`, `srad`, `wind`, `vapr`):**
+  * `id`: Identificador único de la parcela.
+  * `latitude`, `longitude`: Coordenadas geográficas en WGS84.
+  * `period`: Periodo de referencia (`1970-2000`).
+  * `month`: Mes (formato `01` a `12`).
+  * Valores extraídos en una columna con el nombre de la variable elegida:
+    * `tmin`: Temperatura mínima mensual (°C).
+    * `tmax`: Temperatura máxima mensual (°C).
+    * `tavg`: Temperatura media mensual (°C).
+    * `prec`: Precipitación mensual (mm).
+    * `srad`: Radiación solar mensual ($\text{kJ}\cdot\text{m}^{-2}\cdot\text{día}^{-1}$).
+    * `wind`: Velocidad del viento mensual ($\text{m}\cdot\text{s}^{-1}$).
+    * `vapr`: Presión de vapor de agua mensual ($\text{kPa}$).
+
+### `historical_monthly_weather_data.csv` (series meteorológicas mensuales históricas)
+Contiene la serie temporal de datos meteorológicos mensuales (CRU-TS) para cada parcela en su rango temporal configurado (hasta el año 2021).
 * **Campos principales:**
   * `id`: Identificador único de la parcela.
   * `latitude`, `longitude`: Coordenadas geográficas en WGS84 (redondeadas a 6 decimales).
   * `year`: Año de la observación.
   * `month`: Mes (formato `01` a `12`).
-  * `temp`: Temperatura media mensual (°C).
+  * `tmin`, `tmax`, `tavg`: Valores de temperaturas extremas y medias mensuales (°C).
   * `prec`: Precipitación mensual (mm).
   * `martonne`: Índice de aridez de Martonne mensual ($I = 12 \cdot P / (T + 10)$).
 
-### `historical_year_climatic_data.csv` (datos históricos anuales)
-Resume los datos mensuales en valores anuales.
+### `historical_year_weather_data.csv` (sumarios meteorológicos anuales históricos)
+Resume los datos meteorológicos mensuales en valores anuales.
 * **Campos principales:**
   * `id`, `latitude`, `longitude`, `year`.
   * `tavg`: Temperatura media anual (°C).
   * `prec`: Precipitación anual acumulada (mm).
   * `martonne`: Índice de aridez de Martonne anual ($I = P / (T + 10)$).
 
-### `historical_period_climatic_data.csv` (periodo histórico medio)
-Representa los valores promedio para todo el rango histórico consultado para cada parcela (ej. de 1970 a 2000).
+### `historical_period_weather_data.csv` (periodo meteorológico histórico medio)
+Representa los valores promedio mensuales y anuales de tiempo meteorológico para todo el rango temporal consultado para cada parcela (ej. de 1990 a 2020).
 * **Campos principales:**
-  * Contiene los valores de las 19 variables bioclimáticas tradicionales de WorldClim (`bio1` a `bio19`), así como la temperatura media del periodo, precipitación acumulada y el índice de Martonne promedio del periodo.
+  * Parámetros mensuales y anuales promediados para temperatura, precipitación e índice de Martonne para el periodo seleccionado.
 
 ### `future_climate_data.csv` (proyecciones futuras CMIP6)
 Contiene los valores brutos de las proyecciones climáticas futuras para cada combinación de parcela, escenario SSP (`ssp126`, `ssp245`, `ssp370`, `ssp585`), periodo futuro (`2021-2040`, `2041-2060`, `2061-2080`, `2081-2100`), mes y modelo climático.
@@ -70,10 +95,10 @@ Resume las proyecciones futuras en promedios mensuales multianuales para cada pe
   * Valores promedio mensuales de temperatura y precipitación.
 
 ### `all_output_data.xlsx` (libro de Excel consolidado)
-Agrupa todas las hojas de datos anteriores (`historical_monthly`, `historical_year`, `historical_period`, `future`, `future_period`) en pestañas independientes dentro de un único libro de cálculo.
+Agrupa todas las hojas de datos descritas anteriormente (`historical_climate`, `historical_monthly_weather`, `historical_year_weather`, `historical_period_weather`, `future`, `future_period`) en pestañas independientes dentro de un único libro de cálculo.
 
 ### `plots_extracted.geojson` (capa de puntos geoespacial)
-Fichero vectorial en formato GeoJSON (CRS EPSG:4326 - WGS84) que contiene la ubicación de las parcelas junto con sus atributos climáticos promedio históricos o futuros asociados, ideal para su importación inmediata en QGIS, ArcGIS o librerías de Python/R.
+Fichero vectorial en formato GeoJSON (CRS EPSG:4326 - WGS84) que contiene únicamente la ubicación de las parcelas (`plot_id` y coordenadas en el bloque de geometría), lo que lo hace muy ligero e ideal para su importación limpia en QGIS, ArcGIS o librerías de Python/R.
 
 ### `citations_and_metadata.md` (metadatos y citaciones)
 Un informe científico en Markdown que documenta la fecha de ejecución, los parámetros CLI utilizados, y genera automáticamente las referencias bibliográficas y citaciones formales requeridas para las bases de datos de WorldClim (Fick & Hijmans), CMIP6, el índice de Martonne, y las librerías espaciales de R utilizadas.

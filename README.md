@@ -38,8 +38,8 @@ First few rows showing the extracted monthly climate variables (e.g., precipitat
 | plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 02 | 56.3 | 7.0 | -2.0 | 2.5 |
 | plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 03 | 96.7 | 12.0 | 0.0 | 6.0 |
 
-### B. Historical period summary (`historical_period_climatic_data.csv`)
-Aggregated values and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
+### B. Historical weather period summary (`historical_period_weather_data.csv`)
+Aggregated weather values and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -210,9 +210,10 @@ Once execution completes, find your output files in `case_studies/template/outpu
 Outputs are grouped as follows:
 
 * **`data/`**:
-  * `historical_monthly_weather_data.csv`: Historical monthly dataset (precipitation, temperatures).
-  * `historical_year_climatic_data.csv`: Historical annual summaries and calculated Martonne Aridity Index.
-  * `historical_period_climatic_data.csv`: Averaged values representing the entire historical range.
+  * `historical_climate_data.csv`: Historical baseline climate data (WorldClim 1970-2000).
+  * `historical_monthly_weather_data.csv`: Historical monthly weather dataset (precipitation, temperatures).
+  * `historical_year_weather_data.csv`: Historical annual weather summaries and calculated Martonne Aridity Index.
+  * `historical_period_weather_data.csv`: Averaged weather values representing the entire historical range.
   * `future_climate_data.csv` & `future_period_climatic_data.csv`: CMIP6 future climate projections (MIROC6 model).
   * `all_output_data.xlsx`: Consolidated multi-sheet Excel workbook with all tables.
   * `plots_extracted.geojson`: Geospatial vector file with coordinates and period summaries.
@@ -240,7 +241,8 @@ The `scripts/main.r` script supports the following CLI arguments:
 | `-v` | `--hst_bio` | `integer` | `NULL` | Specific historical bioclimatic variable index (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Future CMIP6 variable to extract (`all` [generates climodiagrams], `bio` [bioclimatic variables only, skips climodiagrams], `clim` [monthly climate weather only, generates climodiagrams]) |
 | `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `5`, or `all`) |
-| | `--historical` | `logical` | `TRUE` | Enable/disable historical climate extraction |
+| | `--hst_climate` | `logical` | `TRUE` | Enable/disable historical baseline climate extraction |
+| | `--hst_weather` | `logical` | `TRUE` | Enable/disable historical monthly weather extraction |
 | | `--future` | `logical` | `TRUE` | Enable/disable future projection extraction |
 | | `--map` | `logical` | `TRUE` | Enable/disable plot verification map generation |
 | | `--climodiagram`| `logical` | `TRUE` | Enable/disable Walter-Lieth climate diagram generation |

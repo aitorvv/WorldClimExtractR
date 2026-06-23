@@ -11,9 +11,10 @@ Upon successful execution, the `output/` folder will have the following structur
 ```text
 output/
 ├── data/
+│   ├── historical_climate_data.csv
 │   ├── historical_monthly_weather_data.csv
-│   ├── historical_year_climatic_data.csv
-│   ├── historical_period_climatic_data.csv
+│   ├── historical_year_weather_data.csv
+│   ├── historical_period_weather_data.csv
 │   ├── future_climate_data.csv
 │   ├── future_period_climatic_data.csv
 │   ├── all_output_data.xlsx
@@ -34,29 +35,53 @@ output/
 
 ## 1. `data/` directory (structured data)
 
-### `historical_monthly_weather_data.csv` (historical monthly weather data)
-Contains the time-series of monthly climate data for each plot during its configured historical range (up to year 2021).
+### `historical_climate_data.csv` (historical baseline climate data)
+Contains the long-term historical baseline climate data (WorldClim 2.1 baseline for the 1970-2000 period) extracted for each plot. Depending on the `--hst_var` option specified, this file can contain different types of data:
+
+* **Static or Annualized Variables (`elev`, `bio`):**
+  * `id`: Unique plot identifier.
+  * `latitude`, `longitude`: Geographic coordinates in WGS84 (rounded to 6 decimal places).
+  * `period`: Target baseline range (`1970-2000`).
+  * `elevation`: Elevation in meters above sea level (if `--hst_var elev` is processed, derived from SRTM data).
+  * `bio_[1-19]`: Bioclimatic variables (if `--hst_var bio` is processed, specified by the `--hst_bio` option). For example, `bio_3` represents Isothermality.
+
+* **Monthly Climate Variables (`tmin`, `tmax`, `tavg`, `prec`, `srad`, `wind`, `vapr`):**
+  * `id`: Unique plot identifier.
+  * `latitude`, `longitude`: Geographic coordinates in WGS84.
+  * `period`: Target baseline range (`1970-2000`).
+  * `month`: Month of the year (formatted from `01` to `12`).
+  * Extracted values in a column named after the chosen variable:
+    * `tmin`: Monthly minimum temperature (°C).
+    * `tmax`: Monthly maximum temperature (°C).
+    * `tavg`: Monthly average temperature (°C).
+    * `prec`: Monthly precipitation (mm).
+    * `srad`: Monthly solar radiation ($\text{kJ}\cdot\text{m}^{-2}\cdot\text{day}^{-1}$).
+    * `wind`: Monthly wind speed ($\text{m}\cdot\text{s}^{-1}$).
+    * `vapr`: Monthly water vapor pressure ($\text{kPa}$).
+
+### `historical_monthly_weather_data.csv` (historical monthly weather series)
+Contains the time-series of monthly weather data (CRU-TS) for each plot during its configured historical range (up to year 2021).
 * **Key fields:**
   * `id`: Unique plot identifier.
   * `latitude`, `longitude`: Geographic coordinates in WGS84 (rounded to 6 decimal places).
   * `year`: Observation year.
   * `month`: Month (formatted from `01` to `12`).
-  * `temp`: Monthly mean temperature (°C).
+  * `tmin`, `tmax`, `tavg`: Temperature extremes and average values (°C).
   * `prec`: Monthly precipitation (mm).
   * `martonne`: Monthly Martonne aridity index ($I = 12 \cdot P / (T + 10)$).
 
-### `historical_year_climatic_data.csv` (historical annual weather data)
-Summarizes the monthly values into annual records.
+### `historical_year_weather_data.csv` (historical annual weather summaries)
+Summarizes the monthly weather series values into annual records.
 * **Key fields:**
   * `id`, `latitude`, `longitude`, `year`.
   * `tavg`: Annual mean temperature (°C).
   * `prec`: Annual accumulated precipitation (mm).
   * `martonne`: Annual Martonne aridity index ($I = P / (T + 10)$).
 
-### `historical_period_climatic_data.csv` (historical period mean)
-Represents the overall average values across the entire historical target period for each plot (e.g., from 1970 to 2000).
+### `historical_period_weather_data.csv` (historical period weather mean)
+Represents the overall monthly and annual weather average values across the entire historical target range for each plot (e.g., from 1990 to 2020).
 * **Key fields:**
-  * Contains the 19 traditional WorldClim bioclimatic variables (`bio1` to `bio19`), alongside overall mean temperature, accumulated precipitation, and mean Martonne aridity index for the period.
+  * Averaged monthly and annual parameters for temperature, precipitation, and Martonne index over the selected weather period.
 
 ### `future_climate_data.csv` (CMIP6 future projections)
 Contains the raw future climate projections for each combination of plot, SSP scenario (`ssp126`, `ssp245`, `ssp370`, `ssp585`), future period (`2021-2040`, `2041-2060`, `2061-2080`, `2081-2100`), month, and climate model.
@@ -70,10 +95,10 @@ Summarizes the future projections into multi-year monthly averages for each futu
   * Average monthly temperature and precipitation values.
 
 ### `all_output_data.xlsx` (consolidated Excel workbook)
-Consolidates all the dataframes described above (`historical_monthly`, `historical_year`, `historical_period`, `future`, `future_period`) as independent worksheets within a single workbook file.
+Consolidates all the dataframes described above (`historical_climate`, `historical_monthly_weather`, `historical_year_weather`, `historical_period_weather`, `future`, `future_period`) as independent worksheets within a single workbook file.
 
 ### `plots_extracted.geojson` (geospatial point layer)
-A vector file in GeoJSON format (CRS EPSG:4326 - WGS84) containing the spatial locations of the plots joined with their historical or future period average climate attributes. Ideal for import into QGIS, ArcGIS, or R/Python GIS environments.
+A vector file in GeoJSON format (CRS EPSG:4326 - WGS84) containing the spatial locations of the plots. Unlike previous versions, it only contains the `plot_id` and coordinates in the geometry block, making it lightweight and ideal for clean geographic import into QGIS, ArcGIS, or R/Python GIS environments.
 
 ### `citations_and_metadata.md` (metadata and bibliographical citations)
 A markdown report documenting the execution date, the exact CLI options used, and auto-generating formal citations for WorldClim (Fick & Hijmans), CMIP6 projections, the Martonne index, and active R geospatial packages.

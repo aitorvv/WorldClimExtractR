@@ -38,8 +38,8 @@ Primeras filas con las variables climáticas mensuales extraídas (precipitació
 | plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 02 | 56.3 | 7.0 | -2.0 | 2.5 |
 | plot_1 | 37.903222 | -2.911167 | 1275 | 2015 | 03 | 96.7 | 12.0 | 0.0 | 6.0 |
 
-### B. Resumen del periodo histórico (`historical_period_climatic_data.csv`)
-Valores consolidados por periodo e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
+### B. Resumen meteorológico del periodo histórico (`historical_period_weather_data.csv`)
+Valores meteorológicos consolidados por periodo e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -210,9 +210,10 @@ Tras la finalización del script, consulte la carpeta `case_studies/template/out
 Los resultados se distribuyen en las siguientes carpetas:
 
 * **`data/`**:
-  * `historical_monthly_weather_data.csv`: Dataset mensual histórico (precipitación, temperaturas mínimas, máximas y medias).
-  * `historical_year_climatic_data.csv`: Sumarios anuales calculados e índice de aridez de Martonne.
-  * `historical_period_climatic_data.csv`: Resumen promediado de todo el periodo histórico.
+  * `historical_climate_data.csv`: Datos climáticos de referencia histórica (WorldClim 1970-2000).
+  * `historical_monthly_weather_data.csv`: Dataset meteorológico mensual histórico (precipitación, temperaturas mínimas, máximas y medias).
+  * `historical_year_weather_data.csv`: Sumarios meteorológicos anuales calculados e índice de aridez de Martonne.
+  * `historical_period_weather_data.csv`: Resumen meteorológico promediado de todo el periodo histórico.
   * `future_climate_data.csv` & `future_period_climatic_data.csv`: Extracciones de las proyecciones climáticas del GCM MIROC6 bajo los escenarios SSP.
   * `all_output_data.xlsx`: Libro Excel multi-pestaña consolidando todas las tablas anteriores.
   * `plots_extracted.geojson`: Capa vectorial con los puntos extraídos y sus sumarios de periodo para uso en GIS.
@@ -240,7 +241,8 @@ El script `scripts/main.r` expone las siguientes opciones mediante argumentos:
 | `-v` | `--hst_bio` | `integer` | `NULL` | Número de bioclimático histórico a extraer (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Variables futuras a procesar (`all` [genera climogramas], `bio` [solo bioclimáticos, omite climogramas], `clim` [solo clima mensual, genera climogramas]) |
 | `-s` | `--ssp` | `character` | `all` | Escenarios SSP futuros (`1`, `2`, `3`, `5` o `all`) |
-| | `--historical` | `logical` | `TRUE` | Activar/desactivar la extracción de históricos |
+| | `--hst_climate` | `logical` | `TRUE` | Activar/desactivar la extracción del clima base histórico |
+| | `--hst_weather` | `logical` | `TRUE` | Activar/desactivar la extracción del tiempo meteorológico mensual histórico |
 | | `--future` | `logical` | `TRUE` | Activar/desactivar la extracción de proyecciones futuras |
 | | `--map` | `logical` | `TRUE` | Activar/desactivar la generación de mapas de verificación |
 | | `--climodiagram`| `logical` | `TRUE` | Activar/desactivar la generación de climogramas Walter-Lieth |
