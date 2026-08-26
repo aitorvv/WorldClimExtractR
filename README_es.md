@@ -25,51 +25,13 @@ A continuación se muestra un ejemplo ilustrativo con 6 parcelas de prueba distr
 
 ---
 
-## 📊 Previsualización de datos tabulares
+## 📊 Flujo de trabajo y Opciones de Salida
 
-A continuación se expone una muestra de la estructura de las tablas de salida que la herramienta genera automáticamente en formatos `CSV` y `XLSX` (libro Excel unificado):
+**WorldClimExtractR** te permite seleccionar exactamente qué datos necesitas extraer. Puedes elegir obtener los datos climáticos base históricos, series temporales meteorológicas o las proyecciones futuras CMIP6.
 
-### A. Datos de clima base histórico (`historical_climate_data.csv`)
-Variables de clima base de referencia a largo plazo (ej. índices bioclimáticos o elevación) extraídas para el periodo de referencia estándar 1970-2000:
+<img src="documentation/images/workflow_options.svg" width="100%" alt="Opciones de Flujo de Trabajo" />
 
-| id | latitude | longitude | period | bio_3 |
-| :--- | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 1970-2000 | 37.8 |
-| plot_2 | 35.597500 | -82.555400 | 1970-2000 | 40.2 |
-
-> [!NOTE]
-> Las columnas varían dinámicamente según el parámetro de variable de clima base histórico seleccionado (`--hst_var`).
-
-### B. Datos meteorológicos mensuales históricos (`historical_monthly_weather_data.csv`)
-Primeras filas con las observaciones meteorológicas mensuales extraídas (precipitación, temperaturas extremas y medias) desde CRU-TS:
-
-| id | latitude | longitude | year | month | tmin | tmax | tavg | prec |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | -3 | 8 | 2.5 | 48.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | -2 | 7 | 2.5 | 56.3 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 0 | 12 | 6.0 | 96.7 |
-
-### C. Resumen meteorológico del periodo histórico (`historical_period_weather_data.csv`)
-Valores meteorológicos consolidados e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
-
-| id | period | month | tmin | tmax | tavg | prec | martonne |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 2015-2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
-| plot_1 | 2015-2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
-
-> [!NOTE]
-> La tabla de resumen del periodo contiene columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los límites de variación temporal.
-
-### D. Proyecciones climáticas de futuro (`future_period_climate_data.csv`)
-Promedios proyectados bajo modelos CMIP6 y rangos (mínimo/máximo) agrupados por periodo/década y escenario SSP:
-
-| id | model | ssp | period | tmin | tmax | tavg | prec | martonne |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | MIROC6 | 2 | 2021-2040 | 7.1 | 19.8 | 13.5 | 502.0 | 21.39 |
-| plot_1 | MIROC6 | 2 | 2041-2060 | 7.7 | 20.8 | 14.2 | 484.0 | 19.96 |
-
-> [!NOTE]
-> Las tablas de proyecciones futuras contienen columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los márgenes de incertidumbre de cada periodo proyectado.
+Para una explicación detallada de cada columna generada y formato, por favor revisa la [Guía de Resultados Generados](documentation/GENERATED_OUTPUTS_es.md).
 
 ---
 
@@ -184,40 +146,23 @@ graph LR
 
 ---
 
-## 🚀 Ejemplo de uso completo
+## 🚀 Uso y Casos Comunes
 
-Para ejecutar un caso de prueba utilizando la plantilla suministrada:
+Para ver exactamente cómo ejecutar el script según tus objetivos de investigación (ej., obtener todos los datos vs. solo proyecciones futuras), por favor revisa nuestra [**Guía de Casos de Uso Comunes**](documentation/USE_CASES_es.md).
 
-### Paso 1: configurar las coordenadas de entrada
-Edite el archivo de entrada en `case_studies/template/input/plots.csv` indicando el identificador del punto (*id*), sus coordenadas geográficas (*latitude* y *longitude*, SRC = WGS84), y los años históricos de los que se quiere extraer la información (*hst_start_year* y *hst_end_year*; por defecto se elige el periodo 1990-2020).
+### Ejecución Básica
 
-> [!IMPORTANT]
-> Las coordenadas de entrada deben estar estrictamente en formato decimal WGS84 (longitud/latitud). Ya no se admite la conversión automática al vuelo de coordenadas UTM.
-
-```csv
-id,latitude,longitude,hst_start_year,hst_end_year
-plot_1,37.90322,-2.91116,2015,2021
-plot_2,42.60910,-4.77280,1990,2020
-```
-
-### Paso 2: organizar los archivos raster (.tif)
-Asegúrese de haber descargado y ubicado las capas de WorldClim siguiendo el esquema detallado en [CLIMATE_DATA_es.md](documentation/CLIMATE_DATA_es.md). Puede organizarlas en:
-1. **El directorio del proyecto** (ubicación por defecto): Colocando las tres subcarpetas de datos dentro de `climate_data/` en la raíz.
-2. **Un disco externo o directorio alternativo**: Almacenando la estructura de carpetas climáticas en una ubicación externa y pasándole la ruta al script mediante el flag `--data` (evitando ocupar espacio en el disco principal).
-
-### Paso 3: ejecutar el script por consola
-Abra su terminal y ejecute el script principal. Puede consultar los parámetros y flags disponibles en la sección de [Opciones de Ejecución por Consola (CLI)](#⚙️-opciones-de-ejecución-por-consola-cli) (también visibles con el comando `Rscript scripts/main.r --help`):
+La forma más básica de ejecutar el script utilizando el caso de estudio de plantilla suministrado:
 
 ```bash
-# Ejecución básica (buscando las capas TIFFs en la carpeta climate_data del proyecto)
-# Establezca el directorio de trabajo en R (setwd("~/WorldClimExtractR")) antes de ejecutar o use cd desde consola
-# Rscript scripts/main.r --case "template" --basedir "." --lang "es" --hst_var "elev" --fut_var "clim" --ssp "all"
-
-# Ejecución indicando una ruta externa alternativa donde están guardados los TIFFs
-Rscript scripts/main.r --case "template" --basedir "." --data "/ruta/a/mi/disco_externo/climate_data/" --lang "es"
+# Ejecutar la extracción para las parcelas definidas en la plantilla
+Rscript scripts/main.r --case "template" --basedir "." --lang "es" --hst_var "all" --ssp "all"
 ```
 
-### Paso 4: resultados generados
+> [!NOTE]
+> Para ver una lista completa de parámetros y banderas disponibles, ejecuta `Rscript scripts/main.r --help` o revisa la [Guía de Casos de Uso](documentation/USE_CASES_es.md).
+
+### Inspección de resultados generados
 Tras la finalización del script, consulte la carpeta `case_studies/template/output/` (o la carpeta `output/` equivalente de su caso de estudio si ha duplicado la plantilla para otro caso). Para verificar visualmente la exactitud geográfica y de los climogramas, consulte la [Guía de Verificación de Resultados (VERIFICATION_GUIDE_es.md)](documentation/VERIFICATION_GUIDE_es.md).
 
 Los resultados se distribuyen en las siguientes carpetas:
