@@ -250,7 +250,7 @@ El script `scripts/main.r` expone las siguientes opciones mediante argumentos:
 | `-b` | `--basedir` | `character` | `getwd()` | Ruta raíz absoluta o relativa del código del proyecto |
 | `-d` | `--data` | `character` | `NULL` | Directorio raíz alternativo de capas TIFF [por defecto: igual a basedir] |
 | `-l` | `--lang` | `character` | `en` | Idioma de los climogramas y mapas (`en` o `es`) |
-| `-e` | `--hst_var` | `character` | `elev` | Variable histórica inicial (`elev`, `bio`, `clim`, etc.) |
+| `-e` | `--hst_var` | `character` | `elev` | Variable histórica inicial (`elev`, `bio`, `prec`, `srad`, `tavg`, `tmax`, `tmin`, `vapr`, `wind`, `all`) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Número de bioclimático histórico a extraer (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Variables futuras a procesar (`all` [genera climogramas], `bio` [solo bioclimáticos, omite climogramas], `clim` [solo clima mensual, genera climogramas]) |
 | `-s` | `--ssp` | `character` | `all` | Escenarios SSP futuros (`1`, `2`, `3`, `5` o `all`) |

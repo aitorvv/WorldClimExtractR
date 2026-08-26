@@ -39,7 +39,7 @@ option_list <- list(
   ),
   make_option(c("-e", "--hst_var"),
     type = "character", default = "elev",
-    help = "Historical climate variable to extract (bio, elev, clim, prec, srad, tmax, tmin, vapr, wind) [default: %default]",
+    help = "Historical climate variable to extract (elev, bio, prec, srad, tavg, tmax, tmin, vapr, wind, all) [default: %default]",
     metavar = "character"
   ),
   make_option(c("-v", "--hst_bio"),

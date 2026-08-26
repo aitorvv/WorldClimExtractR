@@ -250,7 +250,7 @@ The `scripts/main.r` script supports the following CLI arguments:
 | `-b` | `--basedir` | `character` | `getwd()` | Root directory path of the project codebase |
 | `-d` | `--data` | `character` | `NULL` | Path to alternative WorldClim raster data folder |
 | `-l` | `--lang` | `character` | `en` | Language for charts and maps (`en` or `es`) |
-| `-e` | `--hst_var` | `character` | `elev` | Starting historical variable to extract (`elev`, `bio`, `clim`) |
+| `-e` | `--hst_var` | `character` | `elev` | Starting historical variable to extract (`elev`, `bio`, `prec`, `srad`, `tavg`, `tmax`, `tmin`, `vapr`, `wind`, `all`) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Specific historical bioclimatic variable index (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Future CMIP6 variable to extract (`all` [generates climodiagrams], `bio` [bioclimatic variables only, skips climodiagrams], `clim` [monthly climate weather only, generates climodiagrams]) |
 | `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `5`, or `all`) |
