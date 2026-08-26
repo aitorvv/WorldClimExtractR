@@ -522,17 +522,17 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
   wc_base_path <- file.path(basedir, "future_climate_data")
   folder_list <- dir(wc_base_path)
   
-  if (ssp %in% c("1", "2", "3", "5")) {
+  if (ssp %in% c("1", "2", "3", "4", "5")) {
     target <- paste(model, "_SSP", ssp, sep = "")
   } else if (ssp == "all") {
-    if (model == "MIROC6") {
-      ssp <- c(1, 2, 3, 5)
-    } else {
-      ssp <- c(1, 2, 3, 4, 5)
+    model_folders <- folder_list[grepl(paste0("^", model, "_SSP"), folder_list)]
+    if (length(model_folders) == 0) {
+      stop(paste0("No future climate data folders found for model ", model))
     }
-    target <- paste(model, "_SSP", ssp, sep = "")
+    ssp <- sub(paste0("^", model, "_SSP"), "", model_folders)
+    target <- model_folders
   } else {
-    stop("Invalid SSP value. Please, use 1, 2, 3, 5 or all")
+    stop("Invalid SSP value. Please, use 1, 2, 3, 4, 5 or all")
   }
   
   if (var == "all") {

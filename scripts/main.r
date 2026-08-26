@@ -54,7 +54,7 @@ option_list <- list(
   ),
   make_option(c("-s", "--ssp"),
     type = "character", default = "2",
-    help = "Shared Socioeconomic Pathways to process (1, 2, 3, 5 or 'all') [default: %default]",
+    help = "Shared Socioeconomic Pathways to process (1, 2, 3, 4, 5 or 'all') [default: %default]",
     metavar = "character"
   ),
   make_option(c("-m", "--model"),

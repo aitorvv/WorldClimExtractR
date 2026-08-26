@@ -253,7 +253,7 @@ El script `scripts/main.r` expone las siguientes opciones mediante argumentos:
 | `-e` | `--hst_var` | `character` | `elev` | Variable histórica inicial (`elev`, `bio`, `prec`, `srad`, `tavg`, `tmax`, `tmin`, `vapr`, `wind`, `all`) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Número de bioclimático histórico a extraer (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Variables futuras a procesar (`all` [genera climogramas], `bio` [solo bioclimáticos, omite climogramas], `clim` [solo clima mensual, genera climogramas]) |
-| `-s` | `--ssp` | `character` | `all` | Escenarios SSP futuros (`1`, `2`, `3`, `5` o `all`) |
+| `-s` | `--ssp` | `character` | `all` | Escenarios SSP futuros (`1`, `2`, `3`, `4`, `5` o `all`) |
 | | `--hst_climate` | `logical` | `TRUE` | Activar/desactivar la extracción del clima base histórico |
 | | `--hst_weather` | `logical` | `TRUE` | Activar/desactivar la extracción del tiempo meteorológico mensual histórico |
 | | `--future` | `logical` | `TRUE` | Activar/desactivar la extracción de proyecciones futuras |

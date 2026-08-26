@@ -253,7 +253,7 @@ The `scripts/main.r` script supports the following CLI arguments:
 | `-e` | `--hst_var` | `character` | `elev` | Starting historical variable to extract (`elev`, `bio`, `prec`, `srad`, `tavg`, `tmax`, `tmin`, `vapr`, `wind`, `all`) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Specific historical bioclimatic variable index (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Future CMIP6 variable to extract (`all` [generates climodiagrams], `bio` [bioclimatic variables only, skips climodiagrams], `clim` [monthly climate weather only, generates climodiagrams]) |
-| `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `5`, or `all`) |
+| `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `4`, `5`, or `all`) |
 | | `--hst_climate` | `logical` | `TRUE` | Enable/disable historical baseline climate extraction |
 | | `--hst_weather` | `logical` | `TRUE` | Enable/disable historical monthly weather extraction |
 | | `--future` | `logical` | `TRUE` | Enable/disable future projection extraction |
