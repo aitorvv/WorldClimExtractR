@@ -104,6 +104,7 @@ Este documento sirve como hoja de ruta para la reorganización, parametrización
 ### 🔄 Pendiente de revisión
 
 - [/] Estandarización de salidas, formato de periodo ('-'), soporte dinámico de SSPs y reemplazo de 'clim' por 'all' en histórico (Rama: `feature-hst-var-all`)
+- [/] Simplificación de READMEs y extracción de ejemplos a `USE_CASES.md` con diagrama SVG de flujo (Rama: `feature-hst-var-all`)
 
 ### 🚧 En progreso
 
