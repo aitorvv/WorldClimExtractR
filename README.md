@@ -25,51 +25,13 @@ Here is an illustrative example using 6 coordinate plots located worldwide, show
 
 ---
 
-## 📊 Tabular data previews
+## 📊 Workflow and Output Options
 
-Below is a preview of the structured tabular datasets automatically produced in `CSV` and `XLSX` (consolidated spreadsheet) formats:
+**WorldClimExtractR** allows you to select exactly what data you need to extract. You can choose to retrieve historical baselines, weather time series, or future CMIP6 projections.
 
-### A. Historical baseline climate data (`historical_climate_data.csv`)
-Long-term baseline variables (e.g., bioclimatic indices or elevation) extracted for the standard 1970-2000 reference period:
+<img src="documentation/images/workflow_options.svg" width="100%" alt="Workflow Options" />
 
-| id | latitude | longitude | period | bio_3 |
-| :--- | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 1970-2000 | 37.8 |
-| plot_2 | 35.597500 | -82.555400 | 1970-2000 | 40.2 |
-
-> [!NOTE]
-> Columns vary dynamically depending on the selected historical baseline variable parameter (`--hst_var`).
-
-### B. Monthly historical weather data (`historical_monthly_weather_data.csv`)
-First few rows showing the extracted monthly weather observations (precipitation, temperature extremes, and average) from CRU-TS:
-
-| id | latitude | longitude | year | month | prec | tmax | tmin | tavg |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | 48.5 | 8 | -3 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | 56.3 | 7 | -2 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 96.7 | 12 | 0 | 6.0 |
-
-### C. Historical weather period summary (`historical_period_weather_data.csv`)
-Aggregated weather averages and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
-
-| id | period | month | tmin | tmax | tavg | prec | martonne |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 2015_2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
-| plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
-
-> [!NOTE]
-> The period summary table includes additional min/max range columns (`tmin_min`, `tmax_max`, etc.) to provide temporal variation limits.
-
-### D. Future climate period projections (`future_period_climatic_data.csv`)
-CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/period and SSP scenario:
-
-| id | model | ssp | period | tmin | tmax | tavg | prec | martonne |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | MIROC6 | 2 | 2021-2040 | 7.1 | 19.8 | 13.5 | 502.0 | 21.39 |
-| plot_1 | MIROC6 | 2 | 2041-2060 | 7.7 | 20.8 | 14.2 | 484.0 | 19.96 |
-
-> [!NOTE]
-> Future climate tables include additional min/max bounds columns (`tmin_min`, `tmax_max`, etc.) to provide uncertainty ranges for each projection period.
+For a detailed explanation of every generated column and format, please check the [Generated Outputs Guide](documentation/GENERATED_OUTPUTS.md).
 
 ---
 
@@ -185,39 +147,23 @@ graph LR
 
 ---
 
-## 🚀 Full usage example
+## 🚀 Usage and Common Use Cases
 
-To run a test case using the provided template case study:
+To see exactly how to run the script depending on your research goals (e.g., getting all data vs. only future projections), please check our [**Common Use Cases Guide**](documentation/USE_CASES.md).
 
-### Step 1: configure your input coordinates
-Edit the input CSV file at `case_studies/template/input/plots.csv`, specifying the point identifiers (*id*), coordinates (*latitude* and *longitude*, CRS = WGS84), and the historical years of interest to extract (*hst_start_year* and *hst_end_year*; defaults to the 1990-2020 period).
+### Basic Execution
 
-> [!IMPORTANT]
-> The input coordinates must be strictly in WGS84 decimal format (longitude/latitude). Automatic on-the-fly conversion of UTM coordinates is no longer supported.
-
-```csv
-id,latitude,longitude,hst_start_year,hst_end_year
-plot_1,37.90322,-2.91116,2015,2021
-plot_2,42.60910,-4.77280,1990,2020
-```
-
-### Step 2: organize your raster (.tif) files
-Download and arrange the WorldClim raster files according to the conventions explained in [CLIMATE_DATA.md](documentation/CLIMATE_DATA.md). You can store them in:
-1. **The project directory** (default): Place the three subfolders of data inside `climate_data/` in the root folder.
-2. **An external drive or custom folder**: Place the climate data structure elsewhere and pass its path using the `--data` flag (recommended to avoid taking up local storage space).
-
-### Step 3: run the script from the terminal
-Open your terminal and run the main script. You can view all available parameters and flags in the [Command Line Interface (CLI) Options](#⚙️-command-line-interface-cli-options) section (also available via the `Rscript scripts/main.r --help` command):
+The most basic way to run the script using the provided template case study:
 
 ```bash
-# Basic run (looking for TIFF files in the climate_data project folder)
-Rscript scripts/main.r --case "template" --basedir "." --lang "es" --hst_var "elev" --fut_var "clim" --ssp "all"
-
-# Run specifying an external path where TIFF files are stored
-Rscript scripts/main.r --case "template" --basedir "." --data "/media/user/ExternalDrive/climate_data/" --lang "en"
+# Run the extraction for the plots defined in the template
+Rscript scripts/main.r --case "template" --basedir "." --lang "en" --hst_var "all" --ssp "all"
 ```
 
-### Step 4: inspect generated outputs
+> [!NOTE]
+> For a full list of available flags and parameters, run `Rscript scripts/main.r --help` or check the [Use Cases Guide](documentation/USE_CASES.md).
+
+### Inspecting generated outputs
 Once execution completes, find your output files in `case_studies/template/output/` (or the equivalent `output/` directory of your case study if you duplicated the template for another project). To visually verify geographical coordinates and Walter-Lieth graphs, consult the [Results Verification Guide (VERIFICATION_GUIDE.md)](documentation/VERIFICATION_GUIDE.md).
 
 Outputs are grouped as follows:
@@ -227,7 +173,7 @@ Outputs are grouped as follows:
   * `historical_monthly_weather_data.csv`: Historical monthly weather dataset (precipitation, temperatures).
   * `historical_year_weather_data.csv`: Historical annual weather summaries and calculated Martonne Aridity Index.
   * `historical_period_weather_data.csv`: Averaged weather values representing the entire historical range.
-  * `future_climate_data.csv` & `future_period_climatic_data.csv`: CMIP6 future climate projections (MIROC6 model).
+  * `future_climate_data.csv` & `future_period_climate_data.csv`: CMIP6 future climate projections (MIROC6 model).
   * `all_output_data.xlsx`: Consolidated multi-sheet Excel workbook with all tables.
   * `plots_extracted.geojson`: Geospatial vector file with coordinates and period summaries.
   * `citations_and_metadata.md`: Markdown document detailing script options and references to cite.
@@ -250,10 +196,10 @@ The `scripts/main.r` script supports the following CLI arguments:
 | `-b` | `--basedir` | `character` | `getwd()` | Root directory path of the project codebase |
 | `-d` | `--data` | `character` | `NULL` | Path to alternative WorldClim raster data folder |
 | `-l` | `--lang` | `character` | `en` | Language for charts and maps (`en` or `es`) |
-| `-e` | `--hst_var` | `character` | `elev` | Starting historical variable to extract (`elev`, `bio`, `clim`) |
+| `-e` | `--hst_var` | `character` | `elev` | Starting historical variable to extract (`elev`, `bio`, `prec`, `srad`, `tavg`, `tmax`, `tmin`, `vapr`, `wind`, `all`) |
 | `-v` | `--hst_bio` | `integer` | `NULL` | Specific historical bioclimatic variable index (1-19) |
 | `-f` | `--fut_var` | `character` | `clim` | Future CMIP6 variable to extract (`all` [generates climodiagrams], `bio` [bioclimatic variables only, skips climodiagrams], `clim` [monthly climate weather only, generates climodiagrams]) |
-| `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `5`, or `all`) |
+| `-s` | `--ssp` | `character` | `all` | Future SSP scenario (`1`, `2`, `3`, `4`, `5`, or `all`) |
 | | `--hst_climate` | `logical` | `TRUE` | Enable/disable historical baseline climate extraction |
 | | `--hst_weather` | `logical` | `TRUE` | Enable/disable historical monthly weather extraction |
 | | `--future` | `logical` | `TRUE` | Enable/disable future projection extraction |

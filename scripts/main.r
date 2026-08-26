@@ -39,7 +39,7 @@ option_list <- list(
   ),
   make_option(c("-e", "--hst_var"),
     type = "character", default = "elev",
-    help = "Historical climate variable to extract (bio, elev, clim, prec, srad, tmax, tmin, vapr, wind) [default: %default]",
+    help = "Historical climate variable to extract (elev, bio, prec, srad, tavg, tmax, tmin, vapr, wind, all) [default: %default]",
     metavar = "character"
   ),
   make_option(c("-v", "--hst_bio"),
@@ -54,7 +54,7 @@ option_list <- list(
   ),
   make_option(c("-s", "--ssp"),
     type = "character", default = "2",
-    help = "Shared Socioeconomic Pathways to process (1, 2, 3, 5 or 'all') [default: %default]",
+    help = "Shared Socioeconomic Pathways to process (1, 2, 3, 4, 5 or 'all') [default: %default]",
     metavar = "character"
   ),
   make_option(c("-m", "--model"),
@@ -449,7 +449,7 @@ if (!run_hst_weather) {
 }
 if (!run_future) {
   unlink(file.path(folder_data, "future_climate_data.csv"))
-  unlink(file.path(folder_data, "future_period_climatic_data.csv"))
+  unlink(file.path(folder_data, "future_period_climate_data.csv"))
 }
 if (!run_hst_climate && !run_hst_weather && !run_future) {
   unlink(file.path(folder_data, "plots_extracted.geojson"))
@@ -559,9 +559,9 @@ if (run_future) {
   }
   if (nrow(df_period_fut) > 0) {
     df_period_fut <- clean_and_round_df(df_period_fut, is_period_or_year = TRUE)
-    write.csv(df_period_fut, file = file.path(folder_data, "future_period_climatic_data.csv"), row.names = FALSE)
-    openxlsx::addWorksheet(wb, "future_period_climatic_data")
-    openxlsx::writeData(wb, "future_period_climatic_data", df_period_fut)
+    write.csv(df_period_fut, file = file.path(folder_data, "future_period_climate_data.csv"), row.names = FALSE)
+    openxlsx::addWorksheet(wb, "future_period_climate_data")
+    openxlsx::writeData(wb, "future_period_climate_data", df_period_fut)
     cat("      -> Future projections by period CSV file successfully created.\n")
   }
 }

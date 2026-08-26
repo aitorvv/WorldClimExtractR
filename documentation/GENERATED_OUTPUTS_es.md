@@ -16,7 +16,7 @@ output/
 │   ├── historical_year_weather_data.csv
 │   ├── historical_period_weather_data.csv
 │   ├── future_climate_data.csv
-│   ├── future_period_climatic_data.csv
+│   ├── future_period_climate_data.csv
 │   ├── all_output_data.xlsx
 │   ├── plots_extracted.geojson
 │   ├── citations_and_metadata.md
@@ -86,7 +86,7 @@ Representa los valores promedio mensuales y anuales de tiempo meteorológico par
 ### `future_climate_data.csv` (proyecciones futuras CMIP6)
 Contiene los valores brutos de las proyecciones climáticas futuras para cada combinación de parcela, escenario SSP (`ssp126`, `ssp245`, `ssp370`, `ssp585`), periodo futuro (`2021-2040`, `2041-2060`, `2061-2080`, `2081-2100`), mes y modelo climático.
 
-### `future_period_climatic_data.csv` (proyecciones por periodo futuro)
+### `future_period_climate_data.csv` (proyecciones por periodo futuro)
 Resume las proyecciones futuras en promedios mensuales multianuales para cada periodo futuro y escenario SSP.
 * **Campos principales:**
   * `period`: Rango temporal (ej. `2041-2060`).

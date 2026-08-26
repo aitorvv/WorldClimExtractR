@@ -25,7 +25,7 @@ Los climogramas en la carpeta `output/climodiagrams/` representan las variables 
   - Los periodos **secos** (donde la línea naranja de temperatura está por encima de la barra azul de precipitación, es decir, $P \le 2T$) deben aparecer sombreados en **amarillo**.
   - Los periodos **húmedos** (donde la precipitación supera el doble de la temperatura, es decir, $P > 2T$) deben aparecer sombreados en **azul claro**.
 - **Consistencia de datos en el subtítulo**:
-  - La precipitación anual sumada y la temperatura media anual indicadas en el subtítulo del gráfico deben coincidir exactamente con los valores anuales tabulados en `historical_year_climatic_data.csv` o `future_period_climatic_data.csv` para ese punto y periodo.
+  - La precipitación anual sumada y la temperatura media anual indicadas en el subtítulo del gráfico deben coincidir exactamente con los valores anuales tabulados en `historical_year_climatic_data.csv` o `future_period_climate_data.csv` para ese punto y periodo.
 - **Idioma**: Verifique que los nombres de los meses en el eje X y las etiquetas de la leyenda se correspondan con el idioma seleccionado (`en` para inglés, `es` para español).
 
 ---

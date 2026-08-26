@@ -88,70 +88,115 @@ get_spdf <- function(df, long_col = "longitude", lat_col = "latitude",
 #' @export
 get_wc_historic_climate_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_var = 3, basedir = getwd(), verbose = TRUE) {
   if (verbose) {
-    cat(paste("Extracting WorldClim historic ", var, " data for plot ", spdf@data[[plot_id]], "...\n", sep = ""))
+    cat(paste("Extracting WorldClim historic ", var, " data for plot ", spdf@data[[plot_id]][1], "...\n", sep = ""))
   }
   
   wc_base_path <- file.path(basedir, "historical_climate_data")
   period <- "1970-2000"  # study baseline period
   
-  if (var == "bio") {
-    if (is.null(bio_var)) {
-      stop("ERROR: You must specify a bio variable number (1-19) using the -v argument when extracting 'bio'.")
-    }
-    file <- file.path(wc_base_path, "wc2.1_30s_bio", paste0("wc2.1_30s_bio_", bio_var, ".tif"))
-    files_list <- file
-  } else if (var == "elev") {
-    file <- file.path(wc_base_path, "wc2.1_30s_elev.tif")
-    files_list <- file
+  # Define what variables to extract
+  if (var == "all") {
+    static_vars <- c("elev", rep("bio", 19))
+    static_bios <- c(NA, 1:19)
+    monthly_vars <- c("tmin", "tmax", "tavg", "prec", "srad", "vapr", "wind")
+  } else if (var %in% c("elev", "bio")) {
+    static_vars <- var
+    static_bios <- bio_var
+    monthly_vars <- character(0)
   } else {
-    folder <- file.path(wc_base_path, paste0("wc2.1_30s_", var))
-    files <- list.files(path = folder, pattern = "\\.tif$")
-    files_list <- file.path(folder, files)
+    static_vars <- character(0)
+    static_bios <- NA
+    monthly_vars <- var
   }
   
-  # ensure that files exist to prevent dplyr errors later
-  if (length(files_list) == 0) {
-    stop(paste0("ERROR: No .tif files found for the variable '", var, "'."))
-  }
-  
-  if (!all(file.exists(files_list))) {
-    stop(paste0("ERROR: One or more expected .tif files for the variable '", var, "' do not exist."))
-  }
-  
-  new_df <- tibble::tibble()
-  
-  for (file in files_list) {
-    raster_file <- raster::raster(file)
-    value <- raster::extract(raster_file, spdf)
-    
-    if (!var %in% c("bio", "elev")) {
-      month <- sub(".*_(\\d+)\\.tif$", "\\1", file)
-      tmp_df <- tibble::tibble(spdf@data, period, month, value)
+  # Helper function to extract a single variable
+  extract_single_var <- function(v, b) {
+    if (v == "bio") {
+      if (is.null(b) || is.na(b)) stop("ERROR: You must specify a bio variable number (1-19) using the -v argument when extracting 'bio'.")
+      file <- file.path(wc_base_path, "wc2.1_30s_bio", paste0("wc2.1_30s_bio_", b, ".tif"))
+      files_list <- file
+    } else if (v == "elev") {
+      file <- file.path(wc_base_path, "wc2.1_30s_elev.tif")
+      files_list <- file
     } else {
-      tmp_df <- tibble::tibble(spdf@data, period, value)
+      folder <- file.path(wc_base_path, paste0("wc2.1_30s_", v))
+      files <- list.files(path = folder, pattern = "\\.tif$")
+      files_list <- file.path(folder, files)
     }
     
-    new_df <- rbind(new_df, tmp_df)
+    if (length(files_list) == 0) stop(paste0("ERROR: No .tif files found for the variable '", v, "'."))
+    if (!all(file.exists(files_list))) stop(paste0("ERROR: One or more expected .tif files for the variable '", v, "' do not exist."))
+    
+    var_df <- tibble::tibble()
+    for (file in files_list) {
+      raster_file <- raster::raster(file)
+      value <- raster::extract(raster_file, spdf)
+      
+      if (!v %in% c("bio", "elev")) {
+        month <- sub(".*_(\\d+)\\.tif$", "\\1", file)
+        tmp_df <- tibble::tibble(spdf@data, period, month, value)
+      } else {
+        tmp_df <- tibble::tibble(spdf@data, period, value)
+      }
+      var_df <- rbind(var_df, tmp_df)
+    }
+    
+    if (v == "bio") {
+      var_name <- paste(v, b, sep = "_")
+      var_df[[var_name]] <- var_df$value
+    } else {
+      var_df[[v]] <- var_df$value
+    }
+    var_df <- dplyr::select(var_df, -value)
+    return(var_df)
   }
   
-  if (var == "bio") {
-    var_name <- paste(var, bio_var, sep = "_")
-    new_df[var_name] <- new_df$value
-  } else {
-    new_df[var] <- new_df$value
+  # Extract static variables
+  static_df <- NULL
+  if (length(static_vars) > 0) {
+    for (i in seq_along(static_vars)) {
+      v <- static_vars[i]
+      b <- static_bios[i]
+      extracted <- extract_single_var(v, b)
+      if (is.null(static_df)) {
+        static_df <- extracted
+      } else {
+        join_cols <- intersect(names(static_df), names(extracted))
+        static_df <- dplyr::left_join(static_df, extracted, by = join_cols)
+      }
+    }
   }
   
-  new_df <- dplyr::select(new_df, -value)
+  # Extract monthly variables
+  monthly_df <- NULL
+  if (length(monthly_vars) > 0) {
+    for (v in monthly_vars) {
+      extracted <- extract_single_var(v, NA)
+      if (is.null(monthly_df)) {
+        monthly_df <- extracted
+      } else {
+        join_cols <- intersect(names(monthly_df), names(extracted))
+        monthly_df <- dplyr::left_join(monthly_df, extracted, by = join_cols)
+      }
+    }
+  }
   
-  vars <- colnames(spdf@data)
-  spdf@data <- dplyr::left_join(spdf@data, new_df, by = vars)
+  # Combine static and monthly
+  if (!is.null(static_df) && !is.null(monthly_df)) {
+    combined_df <- dplyr::bind_rows(static_df, monthly_df)
+    if ("month" %in% names(combined_df) && "period" %in% names(combined_df)) {
+      combined_df <- dplyr::relocate(combined_df, month, .after = period)
+    }
+    spdf@data <- combined_df
+  } else if (!is.null(static_df)) {
+    spdf@data <- static_df
+  } else if (!is.null(monthly_df)) {
+    spdf@data <- monthly_df
+  }
   
   if (verbose) {
-    cat(paste("Data extracted for ", var, " in the plot ", spdf@data[[plot_id]], "\n", sep = ""))
+    cat(paste("Data extracted for ", var, " in the plot ", spdf@data[[plot_id]][1], "\n", sep = ""))
     cat("\n")
-  }
-  
-  if (verbose) {
     cat("Cite this data as follows:\n")
     cat("Fick, S.E. and R.J. Hijmans, 2017. WorldClim 2: new 1km spatial resolution climate surfaces for global land areas. International Journal of Climatology 37 (12): 4302-4315\n")
   }
@@ -236,6 +281,12 @@ get_wc_historical_monthly_weather_data <- function(spdf, period = c(1951:2021), 
     cat("All data was estimated successfully!\n")
     cat("\n")
   }
+  
+  # Standardize column order: identification/time cols first, then tmin, tmax, tavg, prec
+  all_cols <- colnames(new_spdf@data)
+  clim_cols <- intersect(c("tmin", "tmax", "tavg", "prec"), all_cols)
+  meta_cols <- setdiff(all_cols, c("tmin", "tmax", "tavg", "prec"))
+  new_spdf@data <- new_spdf@data[, c(meta_cols, clim_cols)]
   
   if (verbose) {
     cat("You could cite this dataset as follows:\n")
@@ -340,7 +391,7 @@ get_wc_period_weather_data <- function(df, plot_id = 'ID', grouping_var = 'year'
         }
       } %>%
       dplyr::summarise(
-        period = paste(start_year, end_year, sep = '_'),
+        period = paste(start_year, end_year, sep = '-'),
         
         tmin_min = min(tmin, na.rm = TRUE),
         tmax_min = min(tmax, na.rm = TRUE),
@@ -420,8 +471,8 @@ get_wc_period_weather_data <- function(df, plot_id = 'ID', grouping_var = 'year'
 #' @export
 group_wc_period_weather_data <- function(df_period_monthly, df_period_yearly) {
   df_period <- rbind(df_period_monthly, df_period_yearly)
-  df_period <- dplyr::select(df_period, id, period, month, tmin_min, tavg_min, tmax_min, prec_min, 
-                             tmin, tmax, tavg, prec, tmin_max, tavg_max, tmax_max, prec_max, martonne)
+  df_period <- dplyr::select(df_period, id, period, month, tmin_min, tmax_min, tavg_min, prec_min, 
+                             tmin_max, tmax_max, tavg_max, prec_max, tmin, tmax, tavg, prec, martonne)
   df_period <- dplyr::arrange(df_period, id, period, month)
   
   return(df_period)
@@ -481,17 +532,17 @@ get_wc_future_data <- function(spdf, model = 'MIROC6', ssp = 'all', var = 'all',
   wc_base_path <- file.path(basedir, "future_climate_data")
   folder_list <- dir(wc_base_path)
   
-  if (ssp %in% c("1", "2", "3", "5")) {
+  if (ssp %in% c("1", "2", "3", "4", "5")) {
     target <- paste(model, "_SSP", ssp, sep = "")
   } else if (ssp == "all") {
-    if (model == "MIROC6") {
-      ssp <- c(1, 2, 3, 5)
-    } else {
-      ssp <- c(1, 2, 3, 4, 5)
+    model_folders <- folder_list[grepl(paste0("^", model, "_SSP"), folder_list)]
+    if (length(model_folders) == 0) {
+      stop(paste0("No future climate data folders found for model ", model))
     }
-    target <- paste(model, "_SSP", ssp, sep = "")
+    ssp <- sub(paste0("^", model, "_SSP"), "", model_folders)
+    target <- model_folders
   } else {
-    stop("Invalid SSP value. Please, use 1, 2, 3, 5 or all")
+    stop("Invalid SSP value. Please, use 1, 2, 3, 4, 5 or all")
   }
   
   if (var == "all") {

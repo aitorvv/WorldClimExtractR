@@ -16,7 +16,7 @@ output/
 │   ├── historical_year_weather_data.csv
 │   ├── historical_period_weather_data.csv
 │   ├── future_climate_data.csv
-│   ├── future_period_climatic_data.csv
+│   ├── future_period_climate_data.csv
 │   ├── all_output_data.xlsx
 │   ├── plots_extracted.geojson
 │   ├── citations_and_metadata.md
@@ -86,7 +86,7 @@ Represents the overall monthly and annual weather average values across the enti
 ### `future_climate_data.csv` (CMIP6 future projections)
 Contains the raw future climate projections for each combination of plot, SSP scenario (`ssp126`, `ssp245`, `ssp370`, `ssp585`), future period (`2021-2040`, `2041-2060`, `2061-2080`, `2081-2100`), month, and climate model.
 
-### `future_period_climatic_data.csv` (future period summaries)
+### `future_period_climate_data.csv` (future period summaries)
 Summarizes the future projections into multi-year monthly averages for each future period and SSP scenario combination.
 * **Key fields:**
   * `period`: Target period range (e.g., `2041-2060`).
