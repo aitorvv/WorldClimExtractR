@@ -4,8 +4,6 @@ Esta guía proporciona ejemplos de cómo ejecutar la herramienta `WorldClimExtra
 
 ![Opciones de Flujo de Trabajo](images/workflow_options.svg)
 
-> **Nota:** Planeamos lanzar una Interfaz Gráfica de Usuario (GUI) sencilla en el futuro para permitir ejecutar estas extracciones mediante botones en lugar de comandos. Por ahora, la interfaz de línea de comandos proporciona control total sobre el proceso de extracción.
-
 ---
 
 ## Caso de Uso 1: El enfoque "Dámelo Todo"
@@ -22,7 +20,7 @@ Rscript scripts/main.r \
   --hst_weather "TRUE" \
   --future "TRUE" \
   --ssp "all" \
-  --model "CanESM5"
+  --model "MIROC6"
 ```
 **Salidas generadas:**
 - `historical_climate_data.csv`
@@ -39,7 +37,7 @@ Rscript scripts/main.r \
 
 ## Caso de Uso 2: Solo Proyecciones Futuras
 
-Si ya tienes los datos históricos y solo quieres extraer escenarios futuros de cambio climático para SSPs específicos (por ejemplo, SSP2-4.5 y SSP3-7.0).
+Si ya tienes los datos históricos y solo quieres extraer escenarios futuros de cambio climático para SSPs específicos (por ejemplo, SSP2 y SSP3).
 
 ```bash
 Rscript scripts/main.r \
@@ -50,7 +48,7 @@ Rscript scripts/main.r \
   --hst_weather "FALSE" \
   --future "TRUE" \
   --ssp "2,3" \
-  --model "CanESM5"
+  --model "MIROC6"
 ```
 **Salidas generadas:**
 - `future_climate_data.csv`

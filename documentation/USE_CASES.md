@@ -4,8 +4,6 @@ This guide provides examples of how to run the `WorldClimExtractR` tool dependin
 
 ![Workflow Options](images/workflow_options.svg)
 
-> **Note:** We plan to release a simple Graphical User Interface (GUI) in the future to allow running these extractions with simple buttons instead of command-line arguments. For now, the command-line interface provides full control over the extraction process.
-
 ---
 
 ## Use Case 1: The "Give me Everything" approach
@@ -22,7 +20,7 @@ Rscript scripts/main.r \
   --hst_weather "TRUE" \
   --future "TRUE" \
   --ssp "all" \
-  --model "CanESM5"
+  --model "MIROC6"
 ```
 **Outputs generated:**
 - `historical_climate_data.csv`
@@ -39,7 +37,7 @@ Rscript scripts/main.r \
 
 ## Use Case 2: Only Future Projections
 
-If you already have historical data and only want to extract future climate change scenarios for specific SSPs (e.g., SSP2-4.5 and SSP3-7.0).
+If you already have historical data and only want to extract future climate change scenarios for specific SSPs (e.g., SSP2 and SSP3).
 
 ```bash
 Rscript scripts/main.r \
@@ -50,7 +48,7 @@ Rscript scripts/main.r \
   --hst_weather "FALSE" \
   --future "TRUE" \
   --ssp "2,3" \
-  --model "CanESM5"
+  --model "MIROC6"
 ```
 **Outputs generated:**
 - `future_climate_data.csv`
