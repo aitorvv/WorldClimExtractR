@@ -43,19 +43,19 @@ Long-term baseline variables (e.g., bioclimatic indices or elevation) extracted 
 ### B. Monthly historical weather data (`historical_monthly_weather_data.csv`)
 First few rows showing the extracted monthly weather observations (precipitation, temperature extremes, and average) from CRU-TS:
 
-| id | latitude | longitude | year | month | prec | tmax | tmin | tavg |
+| id | latitude | longitude | year | month | tmin | tmax | tavg | prec |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | 48.5 | 8 | -3 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | 56.3 | 7 | -2 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 96.7 | 12 | 0 | 6.0 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | -3 | 8 | 2.5 | 48.5 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | -2 | 7 | 2.5 | 56.3 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 0 | 12 | 6.0 | 96.7 |
 
 ### C. Historical weather period summary (`historical_period_weather_data.csv`)
 Aggregated weather averages and calculated indices (such as the Martonne Aridity Index) representing the selected historical time range:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 2015_2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
-| plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
+| plot_1 | 2015-2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
+| plot_1 | 2015-2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
 
 > [!NOTE]
 > The period summary table includes additional min/max range columns (`tmin_min`, `tmax_max`, etc.) to provide temporal variation limits.

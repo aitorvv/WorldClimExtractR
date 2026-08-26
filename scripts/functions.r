@@ -98,7 +98,7 @@ get_wc_historic_climate_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_
   if (var == "all") {
     static_vars <- c("elev", rep("bio", 19))
     static_bios <- c(NA, 1:19)
-    monthly_vars <- c("prec", "srad", "tavg", "tmax", "tmin", "vapr", "wind")
+    monthly_vars <- c("tmin", "tmax", "tavg", "prec", "srad", "vapr", "wind")
   } else if (var %in% c("elev", "bio")) {
     static_vars <- var
     static_bios <- bio_var
@@ -183,7 +183,11 @@ get_wc_historic_climate_data <- function(spdf, plot_id = 'ID', var = 'bio', bio_
   
   # Combine static and monthly
   if (!is.null(static_df) && !is.null(monthly_df)) {
-    spdf@data <- dplyr::bind_rows(static_df, monthly_df)
+    combined_df <- dplyr::bind_rows(static_df, monthly_df)
+    if ("month" %in% names(combined_df) && "period" %in% names(combined_df)) {
+      combined_df <- dplyr::relocate(combined_df, month, .after = period)
+    }
+    spdf@data <- combined_df
   } else if (!is.null(static_df)) {
     spdf@data <- static_df
   } else if (!is.null(monthly_df)) {
@@ -277,6 +281,12 @@ get_wc_historical_monthly_weather_data <- function(spdf, period = c(1951:2021), 
     cat("All data was estimated successfully!\n")
     cat("\n")
   }
+  
+  # Standardize column order: identification/time cols first, then tmin, tmax, tavg, prec
+  all_cols <- colnames(new_spdf@data)
+  clim_cols <- intersect(c("tmin", "tmax", "tavg", "prec"), all_cols)
+  meta_cols <- setdiff(all_cols, c("tmin", "tmax", "tavg", "prec"))
+  new_spdf@data <- new_spdf@data[, c(meta_cols, clim_cols)]
   
   if (verbose) {
     cat("You could cite this dataset as follows:\n")

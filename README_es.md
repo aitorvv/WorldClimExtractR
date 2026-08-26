@@ -43,19 +43,19 @@ Variables de clima base de referencia a largo plazo (ej. índices bioclimáticos
 ### B. Datos meteorológicos mensuales históricos (`historical_monthly_weather_data.csv`)
 Primeras filas con las observaciones meteorológicas mensuales extraídas (precipitación, temperaturas extremas y medias) desde CRU-TS:
 
-| id | latitude | longitude | year | month | prec | tmax | tmin | tavg |
+| id | latitude | longitude | year | month | tmin | tmax | tavg | prec |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | 48.5 | 8 | -3 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | 56.3 | 7 | -2 | 2.5 |
-| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 96.7 | 12 | 0 | 6.0 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 01 | -3 | 8 | 2.5 | 48.5 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 02 | -2 | 7 | 2.5 | 56.3 |
+| plot_1 | 37.903222 | -2.911167 | 2015 | 03 | 0 | 12 | 6.0 | 96.7 |
 
 ### C. Resumen meteorológico del periodo histórico (`historical_period_weather_data.csv`)
 Valores meteorológicos consolidados e índices calculados (ej. Índice de Aridez de Martonne anual) para el rango temporal completo:
 
 | id | period | month | tmin | tmax | tavg | prec | martonne |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| plot_1 | 2015_2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
-| plot_1 | 2015_2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
+| plot_1 | 2015-2021 | 01 | -2.3 | 7.7 | 2.7 | 72.0 | NA |
+| plot_1 | 2015-2021 | annual | 5.5 | 18.1 | 11.8 | 517.6 | 23.77 |
 
 > [!NOTE]
 > La tabla de resumen del periodo contiene columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los límites de variación temporal.
