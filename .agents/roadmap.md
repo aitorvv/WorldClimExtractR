@@ -112,7 +112,7 @@ Este documento sirve como hoja de ruta para la reorganización, parametrización
 
 ### ⏳ Pendiente
 
-*(No hay tareas en este estado actualmente)*
+- [ ] Creación de una interfaz gráfica de usuario (GUI) sencilla para facilitar la ejecución del script mediante botones (Rama: pendiente)
 
 ---
 
@@ -145,3 +145,4 @@ Este documento sirve como hoja de ruta para la reorganización, parametrización
 | 2026-06-23 | Antigravity (Gemini 3.1 Pro) | `✅ -> ✅` | Reestructuración del proceso histórico separando la extracción de clima base y tiempo meteorológico en flags independientes (`--hst_climate`, `--hst_weather`) y salidas de datos diferenciadas. |
 | 2026-06-23 | Antigravity (Gemini 3.5 Flash) | `✅ -> ✅` | Explicación detallada de todas las variables climáticas de referencia en `GENERATED_OUTPUTS` (según PDF original), y actualización de las plantillas y previsualizaciones tabulares de salida en los READMEs en inglés y español. |
 | 2026-08-26 | Antigravity (Gemini 3.7 Flash) | `⏳ -> 🔄` | Reemplazo de 'clim' por 'all' en histórico (13 filas), soporte dinámico de SSP 4, homogeneización del orden de columnas y estandarización a 'future_period_climate_data'. |
+| 2026-08-26 | Antigravity (Gemini 3.7 Flash) | `🔄 -> ⏳` | Simplificación de documentación con diagramas SVG y casos de uso; añadida la tarea de desarrollo de GUI básica en 'Pendiente'. |
