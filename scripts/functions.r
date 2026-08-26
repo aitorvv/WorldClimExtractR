@@ -381,7 +381,7 @@ get_wc_period_weather_data <- function(df, plot_id = 'ID', grouping_var = 'year'
         }
       } %>%
       dplyr::summarise(
-        period = paste(start_year, end_year, sep = '_'),
+        period = paste(start_year, end_year, sep = '-'),
         
         tmin_min = min(tmin, na.rm = TRUE),
         tmax_min = min(tmax, na.rm = TRUE),
@@ -461,8 +461,8 @@ get_wc_period_weather_data <- function(df, plot_id = 'ID', grouping_var = 'year'
 #' @export
 group_wc_period_weather_data <- function(df_period_monthly, df_period_yearly) {
   df_period <- rbind(df_period_monthly, df_period_yearly)
-  df_period <- dplyr::select(df_period, id, period, month, tmin_min, tavg_min, tmax_min, prec_min, 
-                             tmin, tmax, tavg, prec, tmin_max, tavg_max, tmax_max, prec_max, martonne)
+  df_period <- dplyr::select(df_period, id, period, month, tmin_min, tmax_min, tavg_min, prec_min, 
+                             tmin_max, tmax_max, tavg_max, prec_max, tmin, tmax, tavg, prec, martonne)
   df_period <- dplyr::arrange(df_period, id, period, month)
   
   return(df_period)

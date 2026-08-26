@@ -25,7 +25,7 @@ Climate diagrams in the `output/climodiagrams/` folder represent monthly climate
   - **Dry periods** (where the orange temperature line lies above the blue precipitation bar, i.e., $P \le 2T$) must be shaded in **yellow**.
   - **Wet periods** (where precipitation exceeds twice the temperature, i.e., $P > 2T$) must be shaded in **light blue**.
 - **Subtitle data consistency**:
-  - The accumulated annual precipitation and annual mean temperature indicated in the chart subtitle must exactly match the values tabulated in `historical_year_climatic_data.csv` or `future_period_climatic_data.csv` for that plot and period.
+  - The accumulated annual precipitation and annual mean temperature indicated in the chart subtitle must exactly match the values tabulated in `historical_year_climatic_data.csv` or `future_period_climate_data.csv` for that plot and period.
 - **Language**: Ensure that the month names on the X-axis and legend labels correspond to the selected language (`en` for English, `es` for Spanish).
 
 ---

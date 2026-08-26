@@ -60,7 +60,7 @@ Valores meteorológicos consolidados e índices calculados (ej. Índice de Aride
 > [!NOTE]
 > La tabla de resumen del periodo contiene columnas adicionales de rangos límites (`tmin_min`, `tmax_max`, etc.) para reflejar los límites de variación temporal.
 
-### D. Proyecciones climáticas de futuro (`future_period_climatic_data.csv`)
+### D. Proyecciones climáticas de futuro (`future_period_climate_data.csv`)
 Promedios proyectados bajo modelos CMIP6 y rangos (mínimo/máximo) agrupados por periodo/década y escenario SSP:
 
 | id | model | ssp | period | tmin | tmax | tavg | prec | martonne |
@@ -227,7 +227,7 @@ Los resultados se distribuyen en las siguientes carpetas:
   * `historical_monthly_weather_data.csv`: Dataset meteorológico mensual histórico (precipitación, temperaturas mínimas, máximas y medias).
   * `historical_year_weather_data.csv`: Sumarios meteorológicos anuales calculados e índice de aridez de Martonne.
   * `historical_period_weather_data.csv`: Resumen meteorológico promediado de todo el periodo histórico.
-  * `future_climate_data.csv` & `future_period_climatic_data.csv`: Extracciones de las proyecciones climáticas del GCM MIROC6 bajo los escenarios SSP.
+  * `future_climate_data.csv` & `future_period_climate_data.csv`: Extracciones de las proyecciones climáticas del GCM MIROC6 bajo los escenarios SSP.
   * `all_output_data.xlsx`: Libro Excel multi-pestaña consolidando todas las tablas anteriores.
   * `plots_extracted.geojson`: Capa vectorial con los puntos extraídos y sus sumarios de periodo para uso en GIS.
   * `citations_and_metadata.md`: Documento con metadatos de ejecución e instrucciones bibliográficas de citación.

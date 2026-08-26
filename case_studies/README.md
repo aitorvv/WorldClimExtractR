@@ -45,7 +45,7 @@ output/
 │   ├── historical_year_weather_data.csv     - Consolidated annual weather summaries
 │   ├── historical_period_weather_data.csv   - Average weather parameters for the period
 │   ├── future_climate_data.csv              - Future CMIP6 climate projections
-│   ├── future_period_climatic_data.csv      - Projected period monthly averages
+│   ├── future_period_climate_data.csv      - Projected period monthly averages
 │   ├── all_output_data.xlsx                 - Consolidated Excel workbook
 │   ├── plots_extracted.geojson              - Spatial WGS84 point layer (only coordinates and ID)
 │   ├── citations_and_metadata.md            - Auto-generated citations and run metadata
@@ -104,7 +104,7 @@ output/
 │   ├── historical_year_weather_data.csv     - Resúmenes consolidados anuales meteorológicos
 │   ├── historical_period_weather_data.csv   - Promedios meteorológicos históricos de periodo
 │   ├── future_climate_data.csv              - Proyecciones de cambio climático CMIP6
-│   ├── future_period_climatic_data.csv      - Medias mensuales por periodos futuros
+│   ├── future_period_climate_data.csv      - Medias mensuales por periodos futuros
 │   ├── all_output_data.xlsx                 - Libro Excel consolidado
 │   ├── plots_extracted.geojson              - Capa de puntos WGS84 (solo identificador y coordenadas)
 │   ├── citations_and_metadata.md            - Referencias científicas y metadatos autogenerados

@@ -60,7 +60,7 @@ Aggregated weather averages and calculated indices (such as the Martonne Aridity
 > [!NOTE]
 > The period summary table includes additional min/max range columns (`tmin_min`, `tmax_max`, etc.) to provide temporal variation limits.
 
-### D. Future climate period projections (`future_period_climatic_data.csv`)
+### D. Future climate period projections (`future_period_climate_data.csv`)
 CMIP6 projected averages and ranges (minimum/maximum values) grouped by decade/period and SSP scenario:
 
 | id | model | ssp | period | tmin | tmax | tavg | prec | martonne |
@@ -227,7 +227,7 @@ Outputs are grouped as follows:
   * `historical_monthly_weather_data.csv`: Historical monthly weather dataset (precipitation, temperatures).
   * `historical_year_weather_data.csv`: Historical annual weather summaries and calculated Martonne Aridity Index.
   * `historical_period_weather_data.csv`: Averaged weather values representing the entire historical range.
-  * `future_climate_data.csv` & `future_period_climatic_data.csv`: CMIP6 future climate projections (MIROC6 model).
+  * `future_climate_data.csv` & `future_period_climate_data.csv`: CMIP6 future climate projections (MIROC6 model).
   * `all_output_data.xlsx`: Consolidated multi-sheet Excel workbook with all tables.
   * `plots_extracted.geojson`: Geospatial vector file with coordinates and period summaries.
   * `citations_and_metadata.md`: Markdown document detailing script options and references to cite.
